@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { Helmet } from "react-helmet-async";
 import { productSlug } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -179,8 +180,22 @@ const Offers = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Drinks Offers &amp; Deals | Discounted Alcohol Delivery Kenya | Drinks Avenue</title>
+        <meta name="description" content="Shop the best drinks offers and deals in Kenya. Discounted wine, beer, whiskey, gin, vodka and spirits delivered to your door in Nairobi. Limited-time promotions on premium alcoholic beverages." />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://www.drinksavenue.com/offers" />
+        <meta property="og:title" content="Drinks Offers &amp; Deals | Discounted Alcohol Delivery Kenya" />
+        <meta property="og:description" content="Shop the best drinks offers and deals in Kenya. Discounted wine, beer, whiskey, gin, vodka and spirits with fast delivery in Nairobi." />
+        <meta property="og:url" content="https://www.drinksavenue.com/offers" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://www.drinksavenue.com/logo.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Drinks Offers &amp; Deals | Drinks Avenue Kenya" />
+        <meta name="twitter:description" content="Shop discounted wine, beer, whiskey and spirits with fast delivery across Nairobi and Kenya." />
+      </Helmet>
       <Navigation />
-      
+
       {/* Header Section */}
       <section className="py-4 sm:py-5 md:py-6 bg-gradient-to-br from-wine/10 to-primary/10">
         <div className="container mx-auto px-3 sm:px-4">

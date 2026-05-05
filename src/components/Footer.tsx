@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { Phone, MapPin } from "lucide-react";
+import { Phone, MapPin, Mail } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-gray-900 text-white" aria-label="Site footer">
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {/* Compact 4-Column Layout */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
@@ -11,25 +11,43 @@ const Footer = () => {
           <div className="col-span-2 sm:col-span-1 space-y-2">
             <h3 className="text-lg font-bold text-white">Drinks Avenue</h3>
             <p className="text-gray-300 text-xs leading-relaxed">
-              Premium drinks delivery with 24 hour delivery services.
+              Premium drinks delivery with 24 hour delivery services across Nairobi and Kenya.
             </p>
             <div className="flex space-x-2">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a
+                href="https://www.facebook.com/dalalidrinks"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Drinks Avenue on Facebook"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 <span className="sr-only">Facebook</span>
-                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.533 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a
+                href="https://www.twitter.com/dalalidrinks"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Drinks Avenue on Twitter / X"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 <span className="sr-only">Twitter</span>
-                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                 </svg>
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a
+                href="https://www.instagram.com/dalalidrinks"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Drinks Avenue on Instagram"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 <span className="sr-only">Instagram</span>
-                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987s11.987-5.367 11.987-11.987C24.014 5.367 18.647.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.297C4.198 14.895 3.708 13.744 3.708 12.447s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323c-.875.807-2.026 1.297-3.323 1.297zm7.718-1.297c-.875.807-2.026 1.297-3.323 1.297s-2.448-.49-3.323-1.297c-.807-.875-1.297-2.026-1.297-3.323s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323z"/>
+                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
                 </svg>
               </a>
             </div>
@@ -37,13 +55,16 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div className="space-y-2">
-            <h4 className="text-sm font-semibold text-white">Quick Links</h4>
+            <h4 className="text-sm font-semibold text-white">Shop</h4>
             <ul className="space-y-1">
               <li><Link to="/" className="text-gray-300 hover:text-white transition-colors text-xs">Home</Link></li>
               <li><Link to="/category/beer" className="text-gray-300 hover:text-white transition-colors text-xs">Beer</Link></li>
               <li><Link to="/category/wine" className="text-gray-300 hover:text-white transition-colors text-xs">Wine</Link></li>
-              <li><Link to="/category/spirits" className="text-gray-300 hover:text-white transition-colors text-xs">Spirits</Link></li>
-              <li><Link to="/contact" className="text-gray-300 hover:text-white transition-colors text-xs">Contact</Link></li>
+              <li><Link to="/category/whisky" className="text-gray-300 hover:text-white transition-colors text-xs">Whisky</Link></li>
+              <li><Link to="/category/gin" className="text-gray-300 hover:text-white transition-colors text-xs">Gin</Link></li>
+              <li><Link to="/category/vodka" className="text-gray-300 hover:text-white transition-colors text-xs">Vodka</Link></li>
+              <li><Link to="/offers" className="text-gray-300 hover:text-white transition-colors text-xs">Offers</Link></li>
+              <li><Link to="/featured" className="text-gray-300 hover:text-white transition-colors text-xs">Featured</Link></li>
             </ul>
           </div>
 
@@ -53,9 +74,8 @@ const Footer = () => {
             <ul className="space-y-1">
               <li><Link to="/orders" className="text-gray-300 hover:text-white transition-colors text-xs">My Orders</Link></li>
               <li><Link to="/account" className="text-gray-300 hover:text-white transition-colors text-xs">My Account</Link></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors text-xs">Delivery Info</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors text-xs">Returns</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors text-xs">FAQ</a></li>
+              <li><Link to="/brands" className="text-gray-300 hover:text-white transition-colors text-xs">Brands</Link></li>
+              <li><Link to="/contact" className="text-gray-300 hover:text-white transition-colors text-xs">FAQ &amp; Help</Link></li>
               <li><a href="/sitemap.xml" className="text-gray-300 hover:text-white transition-colors text-xs">Sitemap</a></li>
             </ul>
           </div>
@@ -65,21 +85,22 @@ const Footer = () => {
             <h4 className="text-sm font-semibold text-white">Contact</h4>
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
-                <Phone className="h-3 w-3 text-gray-400 flex-shrink-0" />
-                <a href="tel:0790831798" className="text-gray-300 hover:text-white transition-colors text-xs">
+                <Phone className="h-3 w-3 text-gray-400 flex-shrink-0" aria-hidden="true" />
+                <a href="tel:+254790831798" className="text-gray-300 hover:text-white transition-colors text-xs">
                   0790 831798
                 </a>
               </div>
               <div className="flex items-center space-x-2">
-                <MapPin className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                <Mail className="h-3 w-3 text-gray-400 flex-shrink-0" aria-hidden="true" />
+                <a href="mailto:support@drinksavenue.com" className="text-gray-300 hover:text-white transition-colors text-xs">
+                  support@drinksavenue.com
+                </a>
+              </div>
+              <div className="flex items-center space-x-2">
+                <MapPin className="h-3 w-3 text-gray-400 flex-shrink-0" aria-hidden="true" />
                 <span className="text-gray-300 text-xs">Nairobi, Kenya</span>
               </div>
-              <div className="flex items-start space-x-2">
-                <span className="h-3 w-3 text-gray-400 flex-shrink-0 mt-0.5">•</span>
-                <div className="text-gray-300 text-xs">
-                  <p>24 hour delivery services</p>
-                </div>
-              </div>
+              <p className="text-gray-400 text-xs mt-1">Open 24 hours / 7 days</p>
             </div>
           </div>
         </div>
@@ -88,12 +109,11 @@ const Footer = () => {
         <div className="border-t border-gray-800 mt-4 pt-4">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
             <p className="text-gray-400 text-xs text-center sm:text-left">
-              © 2025 Drinks Avenue. All rights reserved.
+              © 2025 Drinks Avenue. All rights reserved. Must be 18+ to order.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-xs">Privacy</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-xs">Terms</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-xs">Cookies</a>
+              <Link to="/contact" className="text-gray-400 hover:text-white transition-colors text-xs">Privacy</Link>
+              <Link to="/contact" className="text-gray-400 hover:text-white transition-colors text-xs">Terms</Link>
               <a href="/sitemap.xml" className="text-gray-400 hover:text-white transition-colors text-xs">Sitemap</a>
             </div>
           </div>

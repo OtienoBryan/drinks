@@ -555,7 +555,7 @@ const Home = memo(() => {
         
         @media (min-width: 1024px) {
           .hero-section {
-            min-height: 72vh;
+            min-height: 50vh;
           }
         }
         
@@ -597,7 +597,14 @@ const Home = memo(() => {
           width: 100%;
           max-width: 100%;
           overflow: hidden;
-          background-color: #f3f4f6;
+          background-color: #111827;
+        }
+
+        @media (min-width: 1024px) {
+          .hero-image {
+            object-fit: contain;
+            object-position: center center;
+          }
         }
         
         /* Optimize image rendering (photos: avoid crisp-edges — looks over-sharpened) */
@@ -686,7 +693,7 @@ const Home = memo(() => {
       {/* Hero Section - Optimized for LCP and Mobile with SEO */}
       <section className="relative w-full bg-gray-100 hero-section" aria-label="Hero Banner" itemScope itemType="https://schema.org/WebPageElement">
         <div className="w-full max-w-full">
-          <div className="relative h-[55vh] sm:h-[52vh] md:h-[62vh] lg:h-[72vh] w-full max-w-full overflow-hidden shadow-2xl hero-image-container">
+          <div className="relative h-[55vh] sm:h-[52vh] md:h-[62vh] lg:h-[50vh] w-full max-w-full overflow-hidden shadow-2xl hero-image-container">
             <picture>
               {/* Mobile-first: optimized for mobile devices */}
               <source
@@ -723,11 +730,7 @@ const Home = memo(() => {
                 itemProp="image"
                 style={{
                   width: '100%',
-                  minWidth: '100%',
                   height: '100%',
-                  minHeight: '100%',
-                  objectFit: 'cover',
-                  objectPosition: 'center center',
                   willChange: 'auto'
                 }}
                 onLoad={(e) => {
@@ -808,56 +811,55 @@ const Home = memo(() => {
       </section>
 
       {/* Offers of the Week Section - Enhanced SEO */}
-      <section 
+      <section
         id="offers-week"
         data-section="offers-week"
-        className="py-3 sm:py-4 md:py-6 bg-gradient-to-br from-wine/5 to-primary/5" 
+        className="py-6 sm:py-8 md:py-10 bg-background"
         aria-label="Special Offers"
         itemScope
         itemType="https://schema.org/ItemList"
       >
         <div className="container mx-auto px-3 sm:px-4">
-          <div className="text-center mb-4 sm:mb-6 md:mb-8 lg:mb-12">
-            
-            <div className="flex flex-col md:flex-row items-center justify-between mb-3 sm:mb-4 md:mb-6 lg:mb-8">
-              <div className="text-center md:text-left">
-                <h2 className="text-lg sm:text-xl md:text-2xl lg:text-2xl font-bold text-wine mb-2 sm:mb-3 md:mb-4">
-                  Offers of the Week
-                </h2>
-                 
-              </div>
-              <Link to="/offers" className="mt-2 sm:mt-3 md:mt-0">
-                <Button size="sm" className="bg-wine hover:bg-wine/90 active:bg-wine/80 text-white px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-2 lg:px-8 lg:py-3 text-xs sm:text-sm md:text-base touch-manipulation">
-                  View All Offers
-                  <ArrowRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4" />
-                </Button>
-              </Link>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5 sm:mb-6 md:mb-8">
+            <div>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-600 bg-red-50 border border-red-100 px-3 py-1 rounded-full mb-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                LIMITED TIME
+              </span>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+                Offers of the Week
+              </h2>
             </div>
+            <Link to="/offers" className="shrink-0">
+              <Button size="sm" variant="outline" className="border-wine text-wine hover:bg-wine hover:text-white transition-colors text-xs sm:text-sm touch-manipulation">
+                View All Offers
+                <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+              </Button>
+            </Link>
           </div>
           
           {(offersOfTheWeek as any[])?.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
               {(offersOfTheWeek as any[])?.map((product) => (
                 <div key={product.id} className="relative group">
-                  <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group-hover:scale-105 group-active:scale-95 border-0 flex flex-col h-full">
+                  <Card className="overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-active:scale-95 border border-border/60 hover:border-wine/40 flex flex-col h-full rounded-xl bg-card">
                     <Link to={`/product/${productSlug(product)}`} className="block flex-1 min-w-0 touch-manipulation cursor-pointer">
-                      <div className="relative overflow-hidden">
+                      <div className="relative overflow-hidden rounded-t-xl bg-gray-50">
                         <img
                           src={product.image || '/placeholder-product.jpg'}
                           alt={product.name}
-                          className="h-48 sm:h-40 md:h-44 lg:h-48 xl:h-52 w-full object-contain bg-white"
+                          className="h-44 sm:h-40 md:h-44 lg:h-48 xl:h-52 w-full object-contain bg-white transition-transform duration-300 group-hover:scale-105"
                           loading="lazy"
                           decoding="async"
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         />
-                        {/* Discount Badge - Only show if there's a SKU discount */}
                         {getBestDiscountFromSKU(product) > 0 && (
-                          <div className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-red-500 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-bold">
-                            {Math.round(getBestDiscountFromSKU(product))}% OFF
+                          <div className="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-orange-500 text-white px-2 py-0.5 rounded-md text-xs font-bold shadow-sm">
+                            -{Math.round(getBestDiscountFromSKU(product))}%
                           </div>
                         )}
                       </div>
-                      <CardContent className="p-2 sm:p-2 md:p-3 lg:p-3">
+                      <CardContent className="p-2 sm:p-3">
                         <div className="space-y-1 sm:space-y-2">
                           <h3 className="font-semibold text-[10px] sm:text-xs md:text-xs lg:text-sm line-clamp-1 group-hover:text-wine transition-colors">
                             {product.name}
@@ -931,37 +933,34 @@ const Home = memo(() => {
       </section>
 
       {/* Featured Products Section - Enhanced SEO */}
-      <section 
+      <section
         id="featured-products"
         data-section="featured-products"
-        className="py-3 sm:py-4 md:py-6 bg-gradient-to-br from-wine/5 to-primary/5" 
+        className="py-6 sm:py-8 md:py-10 bg-gradient-to-b from-wine/5 via-background to-background"
         aria-label="Featured Products"
         itemScope
         itemType="https://schema.org/ItemList"
       >
         <div className="container mx-auto px-3 sm:px-4">
-          <div className="text-center mb-3 sm:mb-4 md:mb-6 lg:mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-              <div className="text-center sm:text-left">
-                <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl font-bold text-wine mb-1 sm:mb-2 md:mb-3">
-                  {isBrandSearch ? `${brandName} Products` : searchQuery ? `Search Results${searchQuery ? ` for "${searchQuery}"` : ''}` : 'Featured Products'}
-                </h2>
-                <p className="text-[10px] sm:text-xs md:text-sm lg:text-sm text-muted-foreground">
-                  {isBrandSearch 
-                    ? `All products from ${brandName}`
-                    : searchQuery 
-                      ? `Products matching your search`
-                      : 'Discover our handpicked selection of premium drinks'}
-                </p>
-              </div>
-              <Link to="/featured" className="mt-2 sm:mt-0">
-                <Button size="sm" className="bg-wine hover:bg-wine/90 active:bg-wine/80 text-white px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-2 lg:px-8 lg:py-3 text-xs sm:text-sm md:text-base touch-manipulation">
-                  <span className="hidden sm:inline">View All Featured</span>
-                  <span className="sm:hidden">View All</span>
-                  <ArrowRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4" />
-                </Button>
-              </Link>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5 sm:mb-6 md:mb-8">
+            <div>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-wine bg-wine/10 border border-wine/20 px-3 py-1 rounded-full mb-2">
+                ✦ HANDPICKED
+              </span>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+                {isBrandSearch ? `${brandName} Products` : searchQuery ? `Results for "${searchQuery}"` : 'Featured Products'}
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                {isBrandSearch ? `All products from ${brandName}` : searchQuery ? 'Products matching your search' : 'Discover our handpicked selection of premium drinks'}
+              </p>
             </div>
+            <Link to="/featured" className="shrink-0">
+              <Button size="sm" variant="outline" className="border-wine text-wine hover:bg-wine hover:text-white transition-colors text-xs sm:text-sm touch-manipulation">
+                <span className="hidden sm:inline">View All Featured</span>
+                <span className="sm:hidden">View All</span>
+                <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+              </Button>
+            </Link>
           </div>
           {featuredLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
@@ -992,28 +991,27 @@ const Home = memo(() => {
               </Button>
             </div>
           ) : displayProducts.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-6" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
               {displayProducts.map((product, index) => (
                 <div key={product.id} className="relative group" itemProp="item" itemScope itemType="https://schema.org/Product">
-                  <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group-hover:scale-105 group-active:scale-95 border-0 flex flex-col h-full">
+                  <Card className="overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-active:scale-95 border border-border/60 hover:border-wine/40 flex flex-col h-full rounded-xl bg-card">
                     <Link to={`/product/${productSlug(product)}`} className="block flex-1 min-w-0 touch-manipulation cursor-pointer">
-                      <div className="relative overflow-hidden">
+                      <div className="relative overflow-hidden rounded-t-xl bg-gray-50">
                         <img
                           src={product.image || '/placeholder-product.jpg'}
                           alt={product.name}
-                          className="h-48 sm:h-40 md:h-44 lg:h-48 xl:h-52 w-full object-contain bg-white"
+                          className="h-44 sm:h-40 md:h-44 lg:h-48 xl:h-52 w-full object-contain bg-white transition-transform duration-300 group-hover:scale-105"
                           loading="lazy"
                           decoding="async"
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         />
-                        {/* Discount Badge - Only show if there's a SKU discount */}
                         {getBestDiscountFromSKU(product) > 0 && (
-                          <div className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-red-500 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-bold">
-                            {Math.round(getBestDiscountFromSKU(product))}% OFF
+                          <div className="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-orange-500 text-white px-2 py-0.5 rounded-md text-xs font-bold shadow-sm">
+                            -{Math.round(getBestDiscountFromSKU(product))}%
                           </div>
                         )}
                       </div>
-                      <CardContent className="p-2 sm:p-2 md:p-3 lg:p-3">
+                      <CardContent className="p-2 sm:p-3">
                         <div className="space-y-1 sm:space-y-2">
                           <h3 className="font-semibold text-[10px] sm:text-xs md:text-xs lg:text-sm line-clamp-1 group-hover:text-wine transition-colors">
                             {product.name}
@@ -1109,25 +1107,26 @@ const Home = memo(() => {
       </section>
 
       {/* Popular Wines Section */}
-      <section className="py-3 sm:py-4 md:py-6 bg-gradient-to-br from-wine/5 to-primary/5" aria-label="Popular Wines">
+      <section className="py-6 sm:py-8 md:py-10 bg-background" aria-label="Popular Wines">
         <div className="container mx-auto px-3 sm:px-4">
-          <div className="text-center mb-4 sm:mb-6 md:mb-8 lg:mb-12">
-            <div className="flex flex-col md:flex-row items-center justify-between mb-3 sm:mb-4 md:mb-6 lg:mb-8">
-              <div className="text-center md:text-left">
-                <h2 className="text-lg sm:text-xl md:text-2xl lg:text-2xl font-bold text-wine mb-2 sm:mb-3 md:mb-4">
-                  Popular Wines
-                </h2>
-                <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">
-                  Discover our finest selection of wines from around the world.
-                </p>
-              </div>
-              <Link to="/category/wine" className="mt-2 sm:mt-3 md:mt-0">
-                <Button size="sm" className="bg-wine hover:bg-wine/90 active:bg-wine/80 text-white px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-2 lg:px-8 lg:py-3 text-xs sm:text-sm md:text-base touch-manipulation">
-                  View All Wines
-                  <ArrowRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4" />
-                </Button>
-              </Link>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5 sm:mb-6 md:mb-8">
+            <div>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-700 bg-purple-50 border border-purple-100 px-3 py-1 rounded-full mb-2">
+                🍷 TOP PICKS
+              </span>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+                Popular Wines
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Discover our finest selection from around the world
+              </p>
             </div>
+            <Link to="/category/wine" className="shrink-0">
+              <Button size="sm" variant="outline" className="border-wine text-wine hover:bg-wine hover:text-white transition-colors text-xs sm:text-sm touch-manipulation">
+                View All Wines
+                <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+              </Button>
+            </Link>
           </div>
           
           {popularWinesLoading ? (
@@ -1158,24 +1157,22 @@ const Home = memo(() => {
                 <div className="grid grid-cols-2 gap-3">
                   {((popularWines as any[]) || []).slice(0, 12).map((product) => (
                     <div key={product.id} className="relative group">
-                      <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group-hover:scale-105 group-active:scale-95 border-0 flex flex-col h-full">
+                      <Card className="overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-active:scale-95 border border-border/60 hover:border-wine/40 flex flex-col h-full rounded-xl bg-card">
                         <Link to={`/product/${productSlug(product)}`} className="block flex-1 min-w-0 touch-manipulation cursor-pointer">
-                          <div className="relative overflow-hidden">
+                          <div className="relative overflow-hidden rounded-t-xl bg-gray-50">
                             <img
                               src={product.image || '/placeholder-product.jpg'}
                               alt={product.name}
-                              className="h-44 sm:h-48 md:h-52 lg:h-56 w-full object-contain bg-white"
+                              className="h-44 w-full object-contain bg-white transition-transform duration-300 group-hover:scale-105"
                               loading="lazy"
                               decoding="async"
                             />
-                            {/* Popular Wine Badge */}
-                            <div className="absolute top-1 left-1 bg-purple-500 text-white px-1.5 py-0.5 rounded-full text-xs font-bold">
+                            <div className="absolute top-2 left-2 bg-purple-600 text-white px-2 py-0.5 rounded-md text-xs font-bold shadow-sm">
                               POPULAR
                             </div>
-                            {/* Discount Badge */}
                             {product.originalPrice && product.originalPrice > product.price && (
-                              <div className="absolute top-1 right-1 bg-red-500 text-white px-1.5 py-0.5 rounded-full text-xs font-semibold">
-                                {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+                              <div className="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-orange-500 text-white px-2 py-0.5 rounded-md text-xs font-bold shadow-sm">
+                                -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
                               </div>
                             )}
                           </div>
@@ -1248,27 +1245,25 @@ const Home = memo(() => {
 
               {/* Desktop: Grid Layout */}
               <div className="hidden sm:block">
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
                   {((popularWines as any[]) || []).slice(0, 12).map((product) => (
                     <div key={product.id} className="relative group">
-                      <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group-hover:scale-105 group-active:scale-95 border-0 flex flex-col h-full">
+                      <Card className="overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-active:scale-95 border border-border/60 hover:border-wine/40 flex flex-col h-full rounded-xl bg-card">
                         <Link to={`/product/${productSlug(product)}`} className="block flex-1 min-w-0 touch-manipulation cursor-pointer">
-                          <div className="relative overflow-hidden">
+                          <div className="relative overflow-hidden rounded-t-xl bg-gray-50">
                             <img
                               src={product.image || '/placeholder-product.jpg'}
                               alt={product.name}
-                              className="h-48 sm:h-40 md:h-44 lg:h-48 xl:h-52 w-full object-contain bg-white"
+                              className="h-44 sm:h-40 md:h-44 lg:h-48 xl:h-52 w-full object-contain bg-white transition-transform duration-300 group-hover:scale-105"
                               loading="lazy"
                               decoding="async"
                             />
-                            {/* Popular Wine Badge */}
-                            <div className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-purple-500 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-bold">
+                            <div className="absolute top-2 left-2 bg-purple-600 text-white px-2 py-0.5 rounded-md text-xs font-bold shadow-sm">
                               POPULAR
                             </div>
-                            {/* Discount Badge */}
                             {product.originalPrice && product.originalPrice > product.price && (
-                              <div className="absolute top-1 sm:top-2 right-1 sm:right-2 bg-red-500 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-semibold">
-                                {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+                              <div className="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-orange-500 text-white px-2 py-0.5 rounded-md text-xs font-bold shadow-sm">
+                                -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
                               </div>
                             )}
                           </div>
@@ -1347,113 +1342,107 @@ const Home = memo(() => {
         </div>
       </section>
 
-      {/* Made for More Section */}
-      <section className="py-6 sm:py-8 md:py-12 bg-background" aria-label="Premium Collections">
+      {/* Shop by Category Section */}
+      <section className="py-6 sm:py-8 md:py-12 bg-gray-950" aria-label="Shop by Category">
         <div className="container mx-auto px-3 sm:px-4">
-          <div className="text-center mb-6 sm:mb-8 md:mb-10">
-            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-wine mb-2 sm:mb-3">
-              Made for More
+          <div className="text-center mb-6 sm:mb-8">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-gold bg-gold/10 border border-gold/20 px-3 py-1 rounded-full mb-3">
+              ✦ COLLECTIONS
+            </span>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tight">
+              Shop by Category
             </h2>
-            <p className="text-xs sm:text-sm md:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
-              Explore the infinite versatility of premium spirits, and experience how any drink or occasion becomes 'more' with our selection.
+            <p className="text-sm text-gray-400 mt-2 max-w-md mx-auto">
+              Explore our curated selection of premium drinks from around the world
             </p>
-            <Button variant="outline" className="mt-2 sm:mt-3 text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2">
-              View all
-              <ArrowRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4" />
-            </Button>
-              </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
             {[
               {
                 title: "Premium Spirits",
-                description: "Discover our collection of premium spirits from around the world",
+                description: "Whiskey, gin, vodka & rum",
                 image: whiskeyImage,
-                products: filterProductsByCategory((allProducts as any[]) || [], 'spirit').slice(0, 3)
+                link: "/category/whisky",
+                accent: "from-amber-900/80 to-amber-950/95"
               },
               {
                 title: "Fine Wines",
-                description: "Curated selection of wines for every occasion",
+                description: "Red, white & sparkling wines",
                 image: wineImage,
-                products: filterProductsByCategory((allProducts as any[]) || [], 'wine').slice(0, 3)
+                link: "/category/wine",
+                accent: "from-wine/80 to-wine/95"
               },
               {
                 title: "Craft Beers",
-                description: "Local and international craft beers",
+                description: "Lagers, ales & stouts",
                 image: beerImage,
-                products: filterProductsByCategory((allProducts as any[]) || [], 'beer').slice(0, 3)
+                link: "/category/beer",
+                accent: "from-yellow-900/80 to-yellow-950/95"
               }
             ].map((section, index) => (
-              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                <div className="h-32 sm:h-40 md:h-44 bg-cover bg-center" style={{ backgroundImage: `url(${section.image})` }}>
-                  <div className="h-full bg-black/40 flex items-center justify-center">
-                    <div className="text-center text-white px-2">
-                      <h3 className="text-sm sm:text-base md:text-lg font-bold mb-1 sm:mb-2">{section.title}</h3>
-                      <p className="text-xs sm:text-sm opacity-90 leading-tight">{section.description}</p>
-                    </div>
+              <Link key={index} to={section.link} className="group block">
+                <div className="relative overflow-hidden rounded-2xl h-52 sm:h-60 md:h-72 cursor-pointer">
+                  <img
+                    src={section.image}
+                    alt={section.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className={`absolute inset-0 bg-gradient-to-t ${section.accent}`} />
+                  <div className="absolute inset-0 flex flex-col justify-end p-5">
+                    <h3 className="text-white font-bold text-lg sm:text-xl mb-1">{section.title}</h3>
+                    <p className="text-white/70 text-sm mb-3">{section.description}</p>
+                    <span className="inline-flex items-center gap-1.5 text-white text-xs font-semibold bg-white/20 backdrop-blur-sm border border-white/30 px-3 py-1.5 rounded-full w-fit group-hover:bg-white/30 transition-colors">
+                      Shop Now <ArrowRight className="h-3 w-3" />
+                    </span>
                   </div>
                 </div>
-                <div className="p-3 sm:p-4">
-                  <div className="grid grid-cols-3 gap-1 sm:gap-2">
-                    {section.products.map((product) => (
-                      <div key={product.id} className="text-center">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-muted rounded mx-auto mb-1 sm:mb-2"></div>
-                        <p className="text-xs text-muted-foreground truncate leading-tight">{product.name}</p>
-                        {product.skus && product.skus.length > 0 ? (
-                          <div className="space-y-0.5">
-                            {product.skus.map((sku, idx) => (
-                              <div key={idx}>
-                                <p className="text-[10px] font-semibold text-gray-700">{sku.code}</p>
-                                <p className="text-xs font-bold text-wine">{formatPrice(sku.price)}</p>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="text-xs font-bold text-wine">{formatPrice(product.price)}</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Card>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
       {/* Best Selling Beers Section */}
-      <section className="py-16 bg-background" aria-label="Best Selling Beers">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-wine mb-4">
-              Best Selling Beers
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Discover our wide range of craft beers, lagers, pilsners and stouts.
-            </p>
+      <section className="py-6 sm:py-8 md:py-10 bg-gradient-to-b from-background via-amber-50/30 to-background" aria-label="Best Selling Beers">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5 sm:mb-6 md:mb-8">
+            <div>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-100 px-3 py-1 rounded-full mb-2">
+                🍺 BEST SELLERS
+              </span>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+                Best Selling Beers
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Discover our wide range of craft beers, lagers and stouts
+              </p>
+            </div>
+            <Link to="/category/beer" className="shrink-0">
+              <Button size="sm" variant="outline" className="border-amber-600 text-amber-700 hover:bg-amber-600 hover:text-white transition-colors text-xs sm:text-sm touch-manipulation">
+                View All Beers
+                <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+              </Button>
+            </Link>
           </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+
+          <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-6">
             {[
-              { name: "Craft Beer", icon: "🍺" },
-              { name: "Lager", icon: "🍺" },
-              { name: "Pilsner", icon: "🍺" },
-              { name: "Stout", icon: "🍺" }
-            ].map((category) => (
-              <Link
-                key={category.name}
-                to={`/category/${category.name.toLowerCase().replace(' ', '-')}`}
-                className="group"
-              >
-                <Card className="p-4 text-center hover:shadow-lg transition-all duration-300 group-hover:scale-105">
-                  <div className="text-2xl mb-2">{category.icon}</div>
-                  <h3 className="font-semibold text-wine text-sm">{category.name}</h3>
-                </Card>
+              { name: "Craft Beer", image: "/cat/beer.png", link: "/category/beer" },
+              { name: "Lager", image: "/cat/beer.png", link: "/category/beer" },
+              { name: "Whisky", image: "/cat/whiskey.png", link: "/category/whisky" },
+              { name: "Gin", image: "/cat/gin.png", link: "/category/gin" }
+            ].map((cat) => (
+              <Link key={cat.name} to={cat.link} className="group">
+                <div className="flex flex-col items-center gap-2 p-3 rounded-xl border border-border/50 hover:border-amber-300 hover:bg-amber-50/50 transition-all duration-200 bg-card">
+                  <img src={cat.image} alt={cat.name} className="w-10 h-10 object-contain" loading="lazy" />
+                  <span className="text-xs font-semibold text-foreground text-center leading-tight">{cat.name}</span>
+                </div>
               </Link>
             ))}
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
             {filterProductsByCategory((allProducts as any[]) || [], 'beer').slice(0, 12).map((product) => (
               <Suspense key={product.id} fallback={<div className="h-64 bg-gray-100 animate-pulse rounded-lg" />}>
                 <LazyProductCard
@@ -1468,23 +1457,33 @@ const Home = memo(() => {
 
 
       {/* Footer CTA */}
-      <section className="py-8 sm:py-12 md:py-16 bg-wine text-white" aria-label="Call to Action">
-        <div className="container mx-auto px-3 sm:px-4 text-center">
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">
+      <section className="relative overflow-hidden py-10 sm:py-14 md:py-20 bg-gray-950" aria-label="Call to Action">
+        {/* Decorative background blobs */}
+        <div className="absolute -top-20 -left-20 w-64 h-64 bg-wine/30 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-gold/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative container mx-auto px-3 sm:px-4 text-center">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-gold bg-gold/10 border border-gold/30 px-3 py-1 rounded-full mb-4">
+            🚚 24/7 DELIVERY
+          </span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 tracking-tight">
             Ready to Order?
           </h2>
-          <p className="text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto">
-            Get your favorite drinks with 24 hour delivery services. Fast, reliable, and always fresh.
+          <p className="text-sm sm:text-base md:text-lg text-gray-400 mb-7 sm:mb-8 max-w-xl mx-auto leading-relaxed">
+            Get your favourite drinks delivered fast — 24 hours a day, across Nairobi and Kenya.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="bg-white text-wine hover:bg-white/90 text-sm sm:text-base">
-              <Phone className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-              Call Us: 0790 831798
-            </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-wine text-sm sm:text-base">
-              <MapPin className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-              View Locations
-            </Button>
+            <a href="tel:+254790831798">
+              <Button size="lg" className="bg-wine hover:bg-wine/90 text-white shadow-lg shadow-wine/25 text-sm sm:text-base px-6 sm:px-8 w-full sm:w-auto">
+                <Phone className="mr-2 h-4 w-4" />
+                Call: 0790 831798
+              </Button>
+            </a>
+            <Link to="/category/beer">
+              <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 hover:border-white/60 text-sm sm:text-base px-6 sm:px-8 w-full sm:w-auto">
+                Browse All Drinks
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

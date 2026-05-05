@@ -143,8 +143,14 @@ const Origin = () => {
     return (
       <div className="min-h-screen bg-background">
         <Helmet>
-          <title>{selectedOriginName} Products - Drinks Avenue</title>
-          <meta name="description" content={`Browse all products from ${selectedOriginName}. Premium drinks and spirits.`} />
+          <title>{`${selectedOriginName} Drinks | Buy ${selectedOriginName} Alcohol Online Kenya | Drinks Avenue`}</title>
+          <meta name="description" content={`Shop drinks imported from ${selectedOriginName}. Premium wines, spirits, beers and more from ${selectedOriginName} with fast delivery across Nairobi and Kenya.`} />
+          <meta name="robots" content="index, follow" />
+          <link rel="canonical" href={`https://www.drinksavenue.com/origin/${encodeURIComponent((selectedOriginName || '').toLowerCase().replace(/\s+/g, '-'))}`} />
+          <meta property="og:title" content={`${selectedOriginName} Drinks | Drinks Avenue Kenya`} />
+          <meta property="og:description" content={`Shop premium drinks from ${selectedOriginName} with fast delivery in Nairobi and Kenya.`} />
+          <meta property="og:type" content="website" />
+          <meta property="og:image" content="https://www.drinksavenue.com/logo.png" />
         </Helmet>
         <Navigation />
         
@@ -248,8 +254,18 @@ const Origin = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Products by Origin - Drinks Avenue</title>
-        <meta name="description" content="Browse all products by country of origin. Discover premium drinks and spirits from around the world." />
+        <title>Shop Drinks by Country of Origin | Imported Alcohol Kenya | Drinks Avenue</title>
+        <meta name="description" content="Browse premium drinks by country of origin at Drinks Avenue Kenya. Shop imported wines from France, Italy, South Africa; whiskeys from Scotland, Ireland, USA; and spirits from around the world. Fast delivery in Nairobi." />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://www.drinksavenue.com/origin" />
+        <meta property="og:title" content="Shop Drinks by Country of Origin | Drinks Avenue Kenya" />
+        <meta property="og:description" content="Browse imported wines, spirits and beers from around the world. Fast delivery across Nairobi and Kenya." />
+        <meta property="og:url" content="https://www.drinksavenue.com/origin" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://www.drinksavenue.com/logo.png" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Shop Imported Drinks by Origin | Drinks Avenue Kenya" />
+        <meta name="twitter:description" content="Browse premium imported wines, spirits and beers from around the world at Drinks Avenue Kenya." />
       </Helmet>
       <Navigation />
       

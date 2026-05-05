@@ -725,89 +725,90 @@ const Navigation = () => {
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-black/50 md:hidden" onClick={() => setIsMobileMenuOpen(false)}>
-          <div className="bg-background border-r w-80 h-full p-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                  <img 
-                    src="/logo2.png"
-                    alt="Drinks Avenue" 
-                    className="h-10 w-14 object-contain"
-                    onError={(e) => {
-                      console.error('Mobile logo failed to load:', e);
-                      e.currentTarget.style.display = 'none';
-                    }}
+          <div className="bg-white w-72 h-full flex flex-col shadow-xl" onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100">
+              <div className="flex items-center gap-2.5">
+                <div className="h-8 w-8 rounded-full overflow-hidden bg-gray-50 p-1">
+                  <img
+                    src="/logo3.png"
+                    alt="Drinks Avenue"
+                    className="h-full w-full object-contain"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />
-                  <span className="text-xl font-bold text-wine">Drinks Avenue</span>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  aria-label="Close mobile menu"
-                >
-                  <X className="h-5 w-5" />
-                </Button>
+                <div>
+                  <p className="text-sm font-bold text-gray-900 leading-tight">Drinks Avenue</p>
+                  <p className="text-[10px] text-gray-400">24 hr delivery · Kenya</p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-label="Close menu"
+                className="h-8 w-8 text-gray-400 hover:text-gray-700 hover:bg-gray-100"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Categories */}
+            <div className="flex-1 overflow-y-auto px-2 py-3 space-y-0.5 scrollbar-hide">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-[0.15em] px-3 mb-2">Categories</p>
+              {categoriesLoading ? (
+                <div className="flex items-center gap-2 px-3 py-3">
+                  <LoadingWine size="sm" />
+                  <span className="text-sm text-gray-400">Loading…</span>
+                </div>
+              ) : categoriesError ? (
+                <div className="px-3 py-3 text-sm text-red-500">Error loading categories</div>
+              ) : (
+                categories.map((category) => (
+                  <Link
+                    key={category.path}
+                    to={category.path}
+                    className={`flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors relative ${
+                      isActiveCategory(category.path)
+                        ? "bg-wine/10 text-wine"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {isActiveCategory(category.path) && (
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-wine rounded-full" />
+                    )}
+                    {category.name}
+                  </Link>
+                ))
+              )}
+            </div>
+
+            {/* Bottom strip */}
+            <div className="px-4 py-4 border-t border-gray-100 space-y-3">
+              <a href="tel:+254790831798" className="flex items-center gap-2 text-sm text-gray-500 hover:text-wine transition-colors">
+                <Phone className="h-4 w-4" />
+                <span>0790 831798</span>
+              </a>
+              <div className="flex items-center gap-2 text-sm text-gray-400">
+                <MapPin className="h-4 w-4" />
+                <span>Nairobi, Kenya</span>
               </div>
 
-              <div className="space-y-2">
-                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Categories</h3>
-                {categoriesLoading ? (
-                  <div className="flex items-center gap-3 px-3 py-3 text-sm text-muted-foreground">
-                    <LoadingWine size="sm" />
-                    Loading categories...
-                  </div>
-                ) : categoriesError ? (
-                  <div className="flex items-center gap-3 px-3 py-3 text-sm text-destructive">
-                    Error loading categories
-                  </div>
-                ) : (
-                  categories.map((category) => (
-                    <Link
-                      key={category.path}
-                      to={category.path}
-                      className={`flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
-                        isActiveCategory(category.path)
-                          ? "bg-wine text-white"
-                          : "text-muted-foreground hover:text-wine hover:bg-wine/10"
-                      }`}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <span className="text-xl">{category.icon}</span>
-                      {category.name}
-                    </Link>
-                  ))
-                )}
-              </div>
-
-              <div className="pt-4 border-t">
-                <a href="tel:0790831798" className="flex items-center gap-2 text-sm text-muted-foreground mb-4 hover:text-wine transition-colors">
-                  <Phone className="h-4 w-4" />
-                  <span>0790 831798</span>
-                </a>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                  <MapPin className="h-4 w-4" />
-                  <span>Nairobi, Kenya</span>
-                </div>
-                
-                <div className="space-y-2 mb-4">
-                  <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Quick Links</h3>
-                </div>
-                
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Search</h3>
-                  <div className="relative">
-                    <form onSubmit={handleSearch} className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                      <input
-                        ref={searchInputRef}
-                        type="text"
-                        placeholder="Search drinks..."
-                        value={searchQuery}
-                        onChange={handleSearchChange}
-                        onKeyDown={handleKeyDown}
-                        className="w-full pl-10 pr-4 py-1 border border-input rounded-lg bg-background text-xs focus:outline-none focus:ring-2 focus:ring-wine/20 focus:border-wine"
-                      />
+              <div className="pt-2 border-t border-gray-100">
+                <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-2">Search</p>
+                <div className="relative">
+                  <form onSubmit={handleSearch} className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      placeholder="Search drinks..."
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                      onKeyDown={handleKeyDown}
+                      className="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-wine/40 focus:border-wine/40"
+                    />
                     </form>
                     
                     {/* Mobile Search Suggestions Dropdown */}
@@ -905,7 +906,6 @@ const Navigation = () => {
                         )}
                       </div>
                     )}
-                  </div>
                 </div>
               </div>
             </div>

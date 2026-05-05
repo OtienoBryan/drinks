@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -74,20 +75,20 @@ const Contact = () => {
     {
       icon: <Mail className="h-5 w-5" />,
       title: "Email",
-      details: ["support@shoppadrinks.com", "orders@shoppadrinks.com"],
+      details: ["support@drinksavenue.com"],
       description: "Email us anytime, we respond within 24 hours"
     },
     {
       icon: <MapPin className="h-5 w-5" />,
-      title: "Address",
-      details: ["123 Beverage Street", "Drink City, DC 12345"],
-      description: "Visit our headquarters"
+      title: "Location",
+      details: ["Nairobi, Kenya"],
+      description: "Delivering across Nairobi and Kenya"
     },
     {
       icon: <Clock className="h-5 w-5" />,
       title: "Business Hours",
-      details: ["Mon-Fri: 9:00 AM - 8:00 PM", "Sat-Sun: 10:00 AM - 6:00 PM"],
-      description: "We're here to help you"
+      details: ["24 Hours / 7 Days a Week"],
+      description: "We're always here to help you"
     }
   ];
 
@@ -101,8 +102,107 @@ const Contact = () => {
     { value: "partnership", label: "Partnership" }
   ];
 
+  const siteUrl = "https://www.drinksavenue.com";
+  const canonicalUrl = `${siteUrl}/contact`;
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How fast is delivery?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We offer 30-minute express delivery for urgent orders and same-day delivery for regular orders across Nairobi and Kenya. Free delivery is available on qualifying orders."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What are your business hours?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Drinks Avenue operates 24 hours a day, 7 days a week. You can place orders any time and our team will fulfil them promptly."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you have age verification?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, we require age verification for all alcohol purchases in compliance with Kenyan law. You must be 18 years or older to place an order."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I cancel my order?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You can cancel your order within 15 minutes of placing it. After that, please contact us immediately on 0790 831798 for assistance."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which areas do you deliver to?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We deliver premium drinks across Nairobi and the wider Kenya. Contact us to confirm delivery availability in your specific area."
+        }
+      }
+    ]
+  };
+
+  const contactPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact Drinks Avenue",
+    "description": "Contact Drinks Avenue for 24 hour drinks delivery in Kenya. Reach us by phone, email, or our contact form.",
+    "url": canonicalUrl,
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "Drinks Avenue",
+      "telephone": "+254-790-831798",
+      "email": "support@drinksavenue.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Nairobi",
+        "addressCountry": "KE"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+254-790-831798",
+        "contactType": "customer service",
+        "availableLanguage": ["English", "Swahili"],
+        "areaServed": "KE",
+        "hoursAvailable": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+          "opens": "00:00",
+          "closes": "23:59"
+        }
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Contact Us | Drinks Avenue - 24 Hour Drinks Delivery Kenya</title>
+        <meta name="description" content="Contact Drinks Avenue for 24 hour drinks delivery in Nairobi and Kenya. Call 0790 831798 or send us a message. Fast response, 24/7 customer support for all your drinks delivery needs." />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:title" content="Contact Us | Drinks Avenue - 24/7 Drinks Delivery Kenya" />
+        <meta property="og:description" content="Get in touch with Drinks Avenue for alcohol delivery in Nairobi and Kenya. Call 0790 831798. 24/7 customer support available." />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={`${siteUrl}/logo.png`} />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Contact Drinks Avenue - 24/7 Kenya Drinks Delivery" />
+        <meta name="twitter:description" content="Reach our team for fast drinks delivery across Nairobi and Kenya. Call 0790 831798 or use our contact form." />
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(contactPageSchema)}</script>
+      </Helmet>
+
       {/* Navigation */}
       <Navigation />
 
@@ -336,7 +436,7 @@ const Contact = () => {
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-lg mb-2">How fast is delivery?</h3>
                   <p className="text-muted-foreground">
-                    We offer 30-minute express delivery for urgent orders and same-day delivery for regular orders. Free delivery on orders over 50.
+                    We offer fast delivery across Nairobi and Kenya. Orders are processed promptly and delivered fresh to your doorstep. Free delivery is available on qualifying orders.
                   </p>
                 </CardContent>
               </Card>
@@ -344,7 +444,7 @@ const Contact = () => {
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-lg mb-2">What are your business hours?</h3>
                   <p className="text-muted-foreground">
-                    We're open Monday-Friday 9:00 AM - 8:00 PM and Saturday-Sunday 10:00 AM - 6:00 PM. Emergency orders are available 24/7.
+                    We operate 24 hours a day, 7 days a week. You can place orders any time — day or night — and our team will fulfil them as quickly as possible.
                   </p>
                 </CardContent>
               </Card>
@@ -352,7 +452,7 @@ const Contact = () => {
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-lg mb-2">Do you have age verification?</h3>
                   <p className="text-muted-foreground">
-                    Yes, we require age verification for all alcohol purchases. You must be 21 or older to place an order.
+                    Yes, we require age verification for all alcohol purchases in compliance with Kenyan law. You must be 18 years or older to place an order.
                   </p>
                 </CardContent>
               </Card>
@@ -360,7 +460,7 @@ const Contact = () => {
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-lg mb-2">Can I cancel my order?</h3>
                   <p className="text-muted-foreground">
-                    You can cancel your order within 15 minutes of placing it. After that, please contact us for assistance.
+                    You can cancel your order within 15 minutes of placing it. After that, please call us immediately on 0790 831798 for further assistance.
                   </p>
                 </CardContent>
               </Card>

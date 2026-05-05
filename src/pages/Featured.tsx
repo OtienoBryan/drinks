@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { Helmet } from "react-helmet-async";
 import { productSlug } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -144,8 +145,22 @@ const Featured = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Featured Drinks | Premium Alcohol Selection Kenya | Drinks Avenue</title>
+        <meta name="description" content="Explore our handpicked featured drinks collection. Premium wines, craft beers, whiskeys, gins and spirits curated for you. Fast delivery across Nairobi and Kenya with Drinks Avenue." />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://www.drinksavenue.com/featured" />
+        <meta property="og:title" content="Featured Drinks | Premium Alcohol Selection | Drinks Avenue Kenya" />
+        <meta property="og:description" content="Explore our handpicked featured drinks — premium wines, craft beers, whiskeys, gins and spirits with fast delivery across Nairobi and Kenya." />
+        <meta property="og:url" content="https://www.drinksavenue.com/featured" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://www.drinksavenue.com/logo.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Featured Drinks | Drinks Avenue Kenya" />
+        <meta name="twitter:description" content="Handpicked premium wines, beers, whiskeys and spirits. Fast delivery across Nairobi and Kenya." />
+      </Helmet>
       <Navigation />
-      
+
       {/* Header Section */}
       <section className="py-4 sm:py-5 md:py-6 bg-gradient-to-br from-wine/10 to-primary/10">
         <div className="container mx-auto px-3 sm:px-4">
