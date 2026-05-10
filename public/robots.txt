@@ -3,6 +3,8 @@ Allow: /
 Disallow: /checkout
 Disallow: /account
 Disallow: /orders
+Disallow: /cart
 
 Sitemap: https://www.drinksavenue.com/sitemap.xml
+Sitemap: https://www.drinksavenue.com/api/sitemap-products.xml
 Host: www.drinksavenue.com

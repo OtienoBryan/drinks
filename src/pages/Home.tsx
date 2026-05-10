@@ -247,8 +247,8 @@ const Home = memo(() => {
               "Saturday",
               "Sunday"
             ],
-            "opens": "09:00",
-            "closes": "23:00"
+            "opens": "00:00",
+            "closes": "23:59"
           }
         }
       ],
@@ -261,7 +261,7 @@ const Home = memo(() => {
       "sameAs": [
         "https://www.facebook.com/dalalidrinks",
         "https://www.instagram.com/dalalidrinks",
-        "https://www.twitter.com/dalalidrinks"
+        "https://x.com/dalalidrinks"
       ],
       "areaServed": {
         "@type": "Country",
@@ -295,7 +295,7 @@ const Home = memo(() => {
       "sameAs": [
         "https://www.facebook.com/dalalidrinks",
         "https://www.instagram.com/dalalidrinks",
-        "https://www.twitter.com/dalalidrinks"
+        "https://x.com/dalalidrinks"
       ]
     };
   }, [canonicalUrl, siteUrl]);
@@ -455,7 +455,7 @@ const Home = memo(() => {
       {/* SEO Meta Tags - Enhanced */}
       <Helmet>
         <title>24 Hour Drinks Delivery Kenya | Dial a Drink | Chupa Chup | Drinks Avenue</title>
-        <meta name="description" content="24 hour drinks delivery Kenya - Dial a drink and get premium alcoholic beverages delivered fast. Order wine, beer, whiskey, gin, rum, tequila, vodka, Chupa Chup, and spirits with same-day delivery across Nairobi and Kenya. Drinks Avenue - Your trusted 24/7 alcohol delivery service." />
+        <meta name="description" content="24/7 drinks delivery Kenya — Dial a drink for wine, beer, whiskey, gin, rum & spirits. Same-day delivery in Nairobi. Drinks Avenue - Your trusted alcohol delivery service." />
         <meta name="keywords" content="drinks delivery kenya, dial a drink, chupa chup, 24 hour drinks delivery, 24/7 drinks delivery, alcohol delivery Kenya, wine delivery Nairobi, beer delivery Kenya, whiskey delivery, gin delivery, spirits delivery Kenya, online alcohol store, premium drinks delivery, alcohol delivery service, wine shop Nairobi, beer shop Kenya, spirits shop, alcohol online Kenya, drinks delivery Nairobi, buy alcohol online Kenya, alcohol delivery app, wine delivery app, beer delivery app, same day alcohol delivery Kenya, fast drinks delivery Nairobi, instant drinks delivery Kenya" />
         <meta name="author" content="Drinks Avenue" />
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
@@ -468,13 +468,8 @@ const Home = memo(() => {
         <link rel="alternate" hrefLang="en-ke" href={canonicalUrl} />
         <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
         
-        {/* Performance optimizations */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="//api.shoppadrinks.com" />
-        
-        {/* LCP Optimization - Preload hero image for mobile */}
-        <link rel="preload" href="/slider/4.webp" as="image" type="image/jpeg" fetchPriority="high" imageSizes="100vw" />
+        {/* LCP Optimization - Preload hero image */}
+        <link rel="preload" href="/slider/5.png" as="image" type="image/png" fetchPriority="high" />
         
         {/* Open Graph Tags - Enhanced */}
         <meta property="og:title" content="24 Hour Drinks Delivery Kenya | Dial a Drink | Chupa Chup | Drinks Avenue" />
@@ -495,15 +490,6 @@ const Home = memo(() => {
         <meta name="twitter:description" content="Order premium drinks online with fast 30-minute delivery across Kenya. Wide selection of wine, beer, whiskey, gin, rum, and spirits." />
         <meta name="twitter:image" content={`${siteUrl}/logo.png`} />
         <meta name="twitter:image:alt" content="Drinks Avenue - Premium Alcohol Delivery Service" />
-        
-        {/* Additional SEO Tags */}
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="theme-color" content="#8B1538" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Drinks Avenue" />
-        <meta name="application-name" content="Drinks Avenue" />
-        <meta name="msapplication-TileColor" content="#8B1538" />
         
         {/* Structured Data - WebSite */}
         <script type="application/ld+json">
@@ -533,159 +519,6 @@ const Home = memo(() => {
         </script>
       </Helmet>
 
-      {/* Critical CSS for LCP Optimization */}
-      <style>{`
-        /* Critical styles for hero section */
-        .hero-section {
-          min-height: 55vh;
-          background-color: #f3f4f6;
-        }
-        
-        @media (min-width: 640px) {
-          .hero-section {
-            min-height: 52vh;
-          }
-        }
-        
-        @media (min-width: 768px) {
-          .hero-section {
-            min-height: 62vh;
-          }
-        }
-        
-        @media (min-width: 1024px) {
-          .hero-section {
-            min-height: 50vh;
-          }
-        }
-        
-        .hero-image {
-          width: 100%;
-          min-width: 100%;
-          height: 100%;
-          min-height: 100%;
-          object-fit: cover;
-          object-position: center center;
-          display: block;
-          max-width: none;
-        }
-        
-        @media (max-width: 640px) {
-          .hero-image {
-            object-position: center center;
-            width: 100%;
-            min-width: 100%;
-            height: 100%;
-            min-height: 100%;
-          }
-          
-          .hero-image-container {
-            min-height: 55vh;
-            max-height: 55vh;
-          }
-          
-          picture {
-            display: block;
-            width: 100%;
-            height: 100%;
-          }
-        }
-        
-        /* Prevent layout shift — full width of parent */
-        .hero-image-container {
-          position: relative;
-          width: 100%;
-          max-width: 100%;
-          overflow: hidden;
-          background-color: #111827;
-        }
-
-        @media (min-width: 1024px) {
-          .hero-image {
-            object-fit: contain;
-            object-position: center center;
-          }
-        }
-        
-        /* Optimize image rendering (photos: avoid crisp-edges — looks over-sharpened) */
-        .hero-image {
-          image-rendering: auto;
-          backface-visibility: hidden;
-          transform: translateZ(0);
-          -webkit-transform: translateZ(0);
-        }
-        
-        /* Mobile-specific optimizations */
-        @media (max-width: 640px) {
-          .hero-image {
-            image-rendering: auto;
-            transform: translateZ(0);
-            -webkit-transform: translateZ(0);
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            -webkit-perspective: 1000;
-            perspective: 1000;
-          }
-          
-          .hero-image-container {
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
-          }
-          
-          picture {
-            width: 100%;
-            height: 100%;
-            display: block;
-          }
-        }
-        
-        /* Hero picture: fill box with contained image (do not use height:auto — it breaks object-fit) */
-        .hero-image-container picture {
-          display: block;
-          width: 100%;
-          height: 100%;
-        }
-        .hero-image-container picture img.hero-image {
-          width: 100%;
-          min-width: 100%;
-          height: 100%;
-          min-height: 100%;
-          object-fit: cover;
-          object-position: center center;
-        }
-        
-        /* Reduce motion for accessibility */
-        @media (prefers-reduced-motion: reduce) {
-          .hero-image {
-            transform: none;
-            -webkit-transform: none;
-          }
-        }
-        
-        /* Marquee Animation Styles */
-        @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-        .pause-animation {
-          animation-play-state: paused;
-        }
-        .marquee-step {
-          animation: marquee-step 30s steps(1) infinite;
-        }
-        @keyframes marquee-step {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-25%);
-          }
-        }
-      `}</style>
       
       {/* Navigation */}
       <Navigation />

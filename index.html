@@ -1,13 +1,25 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J5LMY7KRH2"></script>
+    <!-- Google Analytics: loaded after page is interactive to avoid render-blocking -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
       gtag('js', new Date());
-      gtag('config', 'G-J5LMY7KRH2');
+      gtag('config', 'G-J5LMY7KRH2', { send_page_view: false });
+      function loadGA() {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-J5LMY7KRH2';
+        s.onload = function() { gtag('event', 'page_view'); };
+        document.head.appendChild(s);
+      }
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadGA, { timeout: 4000 });
+      } else {
+        window.addEventListener('load', loadGA);
+      }
     </script>
 
     <meta charset="UTF-8" />
@@ -31,6 +43,19 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Drinks Avenue" />
 
+    <!-- Critical above-the-fold CSS (inlined to avoid render-blocking stylesheet fetch) -->
+    <style>
+      *,::before,::after{box-sizing:border-box}
+      body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#fff}
+      #root{min-height:100vh}
+      .hero-section{min-height:55vh;background-color:#f3f4f6;width:100%}
+      .hero-image-container{position:relative;width:100%;max-width:100%;overflow:hidden;background-color:#111827;height:55vmin}
+      .hero-image{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+      @media(min-width:640px){.hero-section{min-height:52vh}.hero-image-container{height:52vmin}}
+      @media(min-width:768px){.hero-section{min-height:62vh}.hero-image-container{height:62vmin}}
+      @media(min-width:1024px){.hero-section{min-height:50vh}.hero-image-container{height:50vmin}.hero-image{object-fit:contain}}
+    </style>
+
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/logo.png" />
@@ -41,6 +66,8 @@
     <!-- Performance: preconnect to critical origins -->
     <link rel="preconnect" href="https://www.googletagmanager.com" />
     <link rel="preconnect" href="https://www.google-analytics.com" />
+    <link rel="preconnect" href="https://res.cloudinary.com" />
+    <link rel="dns-prefetch" href="//res.cloudinary.com" />
     <link rel="dns-prefetch" href="//api.shoppadrinks.com" />
 
     <!-- Open Graph -->
@@ -57,7 +84,7 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@DrinksAvenue" />
+    <meta name="twitter:site" content="@dalalidrinks" />
     <meta name="twitter:title" content="Drinks Avenue - 24 Hour Drinks Delivery Kenya" />
     <meta name="twitter:description" content="Premium alcoholic beverages delivered to your door. Wine, beer, spirits with fast 30-minute delivery across Nairobi and Kenya." />
     <meta name="twitter:image" content="https://www.drinksavenue.com/logo.png" />
@@ -71,8 +98,10 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
+      "@id": "https://www.drinksavenue.com/#organization",
       "name": "Drinks Avenue",
       "url": "https://www.drinksavenue.com/",
+      "email": "support@drinksavenue.com",
       "logo": {
         "@type": "ImageObject",
         "url": "https://www.drinksavenue.com/logo.png",
@@ -81,10 +110,17 @@
       },
       "contactPoint": {
         "@type": "ContactPoint",
-        "telephone": "+254-790-831798",
+        "telephone": "+254790831798",
+        "email": "support@drinksavenue.com",
         "contactType": "customer service",
         "availableLanguage": ["English", "Swahili"],
-        "areaServed": "KE"
+        "areaServed": "KE",
+        "hoursAvailable": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+          "opens": "00:00",
+          "closes": "23:59"
+        }
       },
       "address": {
         "@type": "PostalAddress",
@@ -95,7 +131,7 @@
       "sameAs": [
         "https://www.facebook.com/dalalidrinks",
         "https://www.instagram.com/dalalidrinks",
-        "https://www.twitter.com/dalalidrinks"
+        "https://x.com/dalalidrinks"
       ]
     }
     </script>
@@ -105,10 +141,12 @@
     {
       "@context": "https://schema.org",
       "@type": "Store",
+      "@id": "https://www.drinksavenue.com/#store",
       "name": "Drinks Avenue",
       "description": "24 hour drinks delivery service in Kenya. Order wine, beer, whiskey, gin, rum, tequila, vodka, and spirits with fast delivery across Nairobi and Kenya.",
       "url": "https://www.drinksavenue.com/",
-      "telephone": "+254-790-831798",
+      "telephone": "+254790831798",
+      "email": "support@drinksavenue.com",
       "image": "https://www.drinksavenue.com/logo.png",
       "priceRange": "$$",
       "currenciesAccepted": "KES",
@@ -136,10 +174,11 @@
         "@type": "Country",
         "name": "Kenya"
       },
+      "hasMap": "https://maps.google.com/maps?q=-1.2921,36.8219",
       "sameAs": [
         "https://www.facebook.com/dalalidrinks",
         "https://www.instagram.com/dalalidrinks",
-        "https://www.twitter.com/dalalidrinks"
+        "https://x.com/dalalidrinks"
       ]
     }
     </script>

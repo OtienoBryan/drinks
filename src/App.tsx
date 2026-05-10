@@ -9,9 +9,15 @@ import { UserProvider } from "@/contexts/UserContext";
 import { PageLoader } from "@/components/ui/page-loader";
 import { createLazyComponent } from "@/components/LazyWrapper";
 import { resourcePreloader, CRITICAL_IMAGES, CRITICAL_ROUTES } from "@/services/preloader";
-import PerformanceMonitor from "@/components/PerformanceMonitor";
-import { DevTools } from "@/components/DevTools";
 import FloatingContactButtons from "@/components/FloatingContactButtons";
+
+// Tree-shaken out of production bundle entirely
+const PerformanceMonitor = import.meta.env.DEV
+  ? lazy(() => import("@/components/PerformanceMonitor"))
+  : () => null;
+const DevTools = import.meta.env.DEV
+  ? lazy(() => import("@/components/DevTools").then((m) => ({ default: m.DevTools })))
+  : () => null;
 
 // Lazy load all pages with optimized loading states
 const Home = createLazyComponent(() => import("./pages/Home"), "Loading home...", true);
@@ -69,10 +75,8 @@ const App = () => {
     localStorage.removeItem('redirectToLogin');
     sessionStorage.removeItem('redirectToLogin');
     
-    // Debug information
-    console.log('App initialized. Current path:', window.location.pathname);
-    if (window.location.pathname === '/login') {
-      console.log('Redirecting from /login to /');
+    if (import.meta.env.DEV) {
+      console.log('App initialized. Current path:', window.location.pathname);
     }
   }, []);
 

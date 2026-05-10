@@ -450,9 +450,6 @@ const Product = () => {
         <meta name="geo.position" content="-1.2921;36.8219" />
         <link rel="canonical" href={`${window.location.origin}/product/${productSlug(product)}`} />
         
-        {/* Performance optimizations */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {product.images?.[0] && (
           <link rel="preload" href={product.images[0]} as="image" fetchPriority="high" />
         )}
@@ -489,11 +486,6 @@ const Product = () => {
         <meta name="twitter:description" content={`Buy ${product.name} by ${product.brand} online in Kenya. ${product.description?.substring(0, 200) || `Premium ${product.category?.name || 'drink'}`} ${product.origin ? `from ${product.origin}` : ''}. Fast delivery in Nairobi.`} />
         <meta name="twitter:image" content={product.images?.[0] || product.image} />
         <meta name="twitter:image:alt" content={`${product.name} by ${product.brand} - Premium ${product.category?.name || 'drink'} - Drinks Avenue Kenya`} />
-        
-        {/* Additional SEO Tags */}
-        <meta name="theme-color" content="#8B1538" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         
         {/* Structured Data - Product */}
         {structuredData && (
@@ -957,7 +949,7 @@ const Product = () => {
               {filteredRelatedProducts.slice(0, 6).map((relatedProduct, index) => (
                 <div key={relatedProduct.id} className="relative group flex flex-col h-full" itemScope itemType="https://schema.org/ListItem">
                   <meta itemProp="position" content={(index + 1).toString()} />
-                  <Link to={`/product/${productSlug(relatedProduct)}`} className="block flex-1 flex flex-col">
+                  <Link to={`/product/${productSlug(relatedProduct)}`} className="flex flex-col flex-1">
                     <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group-hover:scale-105 group-active:scale-95 border-0 touch-manipulation cursor-pointer flex flex-col h-full">
                       <div className="relative overflow-hidden flex-shrink-0" style={{ minHeight: '144px' }}>
                         <img

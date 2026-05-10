@@ -453,11 +453,6 @@ const Category = () => {
         <meta name="twitter:image" content={`${window.location.origin}/logo.png`} />
         <meta name="twitter:image:alt" content={`${categoryDisplayName} - Drinks Avenue`} />
         
-        {/* Additional SEO Meta Tags */}
-        <meta name="theme-color" content="#8B1538" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        
         {/* Structured Data - CollectionPage */}
         <script type="application/ld+json">
           {JSON.stringify(categoryStructuredData)}

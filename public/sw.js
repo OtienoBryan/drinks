@@ -1,190 +1,147 @@
-const CACHE_NAME = 'dalali-v4';
-const STATIC_CACHE = 'dalali-static-v4';
-const DYNAMIC_CACHE = 'dalali-dynamic-v4';
+const CACHE_NAME = 'dalali-v5';
+const STATIC_CACHE = 'dalali-static-v5';
+const IMAGE_CACHE = 'dalali-images-v5';
 
-// Critical resources to cache immediately
-const CRITICAL_RESOURCES = [
+// Critical shell resources cached on install
+const SHELL_RESOURCES = [
   '/',
   '/index.html',
   '/logo.png',
-  '/placeholder.svg',
-  '/favicon.png'
+  '/favicon.png',
 ];
 
-// Install event - cache critical resources
+// Install — cache the app shell
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE)
-      .then((cache) => {
-        return cache.addAll(CRITICAL_RESOURCES);
-      })
-      .then(() => {
-        return self.skipWaiting();
-      })
+      .then((cache) => cache.addAll(SHELL_RESOURCES))
+      .then(() => self.skipWaiting())
   );
 });
 
-// Activate event - clean up old caches
+// Activate — remove old caches
 self.addEventListener('activate', (event) => {
+  const CURRENT_CACHES = [STATIC_CACHE, IMAGE_CACHE];
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => {
-      return self.clients.claim();
-    })
+    caches.keys()
+      .then((names) => Promise.all(
+        names
+          .filter((n) => !CURRENT_CACHES.includes(n))
+          .map((n) => caches.delete(n))
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
-// Helper function to check if request is for HTML or JS
-function isHTMLOrJS(request) {
-  const url = new URL(request.url);
-  const pathname = url.pathname;
-  return request.mode === 'navigate' || 
-         pathname.endsWith('.html') || 
-         pathname.endsWith('.js') ||
-         pathname.match(/\/js\/.*\.js$/) ||
-         pathname.match(/\/css\/.*\.css$/);
-}
-
-// Fetch event - Network First for HTML/JS/CSS, Cache First for assets
+// Fetch strategies
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET requests
-  if (request.method !== 'GET') {
+  if (request.method !== 'GET') return;
+  if (!url.protocol.startsWith('http')) return;
+
+  // API requests — always network, no caching
+  if (url.pathname.startsWith('/api/')) return;
+
+  // Cross-origin image CDN (Cloudinary) — Cache First, 7-day TTL
+  if (url.hostname.includes('res.cloudinary.com') || url.hostname.includes('cloudinary.com')) {
+    event.respondWith(cacheFirstWithTTL(request, IMAGE_CACHE, 7 * 24 * 3600));
     return;
   }
 
-  // Skip chrome-extension and other non-http requests
-  if (!url.protocol.startsWith('http')) {
+  // Skip other cross-origin requests
+  if (url.origin !== self.location.origin) return;
+
+  // HTML navigation — Network First with cache fallback
+  if (request.mode === 'navigate') {
+    event.respondWith(networkFirstWithFallback(request));
     return;
   }
 
-  // Skip API requests - let them go to network directly
-  if (url.pathname.startsWith('/api/')) {
+  // JS and CSS — Stale-While-Revalidate (instant from cache, refresh in background)
+  if (/\.(js|css)(\?.*)?$/.test(url.pathname)) {
+    event.respondWith(staleWhileRevalidate(request, STATIC_CACHE));
     return;
   }
 
-  // Skip external/cross-origin URLs (CDN images, etc.) - let browser handle them directly
-  if (url.origin !== self.location.origin) {
+  // Local images — Cache First, 7-day TTL
+  if (/\.(png|jpe?g|webp|gif|svg|ico)$/i.test(url.pathname)) {
+    event.respondWith(cacheFirstWithTTL(request, IMAGE_CACHE, 7 * 24 * 3600));
     return;
   }
 
-  // Network First strategy for HTML, JS, and CSS files (ensures updates are fetched)
-  if (isHTMLOrJS(request)) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Cache successful responses
-          if (response && response.status === 200 && response.type === 'basic') {
-            const responseToCache = response.clone();
-            caches.open(DYNAMIC_CACHE)
-              .then((cache) => {
-                cache.put(request, responseToCache);
-              });
-          }
-          return response;
-        })
-        .catch(() => {
-          // Fallback to cache if network fails
-          return caches.match(request).then((cachedResponse) => {
-            if (cachedResponse) {
-              return cachedResponse;
-            }
-            // Fallback to index.html for navigation requests
-            if (request.mode === 'navigate') {
-              return caches.match('/index.html');
-            }
-          });
-        })
-    );
-    return;
-  }
-
-  // Cache First strategy for static assets (images, fonts, etc.)
-  event.respondWith(
-    caches.match(request)
-      .then((cachedResponse) => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-
-        // Otherwise fetch from network
-        return fetch(request)
-          .then((response) => {
-            // Don't cache non-successful responses
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // Clone the response
-            const responseToCache = response.clone();
-
-            // Cache dynamic content
-            caches.open(DYNAMIC_CACHE)
-              .then((cache) => {
-                cache.put(request, responseToCache);
-              });
-
-            return response;
-          })
-          .catch(() => {
-            // Return offline page for navigation requests
-            if (request.mode === 'navigate') {
-              return caches.match('/index.html');
-            }
-          });
-      })
-  );
+  // Everything else — Stale-While-Revalidate
+  event.respondWith(staleWhileRevalidate(request, STATIC_CACHE));
 });
 
-// Background sync for offline actions
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'background-sync') {
-    event.waitUntil(
-      // Handle offline actions when connection is restored
-      handleBackgroundSync()
-    );
+// Network First: try network, fall back to cache, fall back to index.html
+async function networkFirstWithFallback(request) {
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(STATIC_CACHE);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    return caches.match('/index.html');
   }
-});
+}
 
-async function handleBackgroundSync() {
-  // Implement offline action handling here
-  console.log('Background sync triggered');
+// Stale-While-Revalidate: serve cached immediately, update in background
+async function staleWhileRevalidate(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+
+  const networkFetch = fetch(request).then((response) => {
+    if (response.ok) cache.put(request, response.clone());
+    return response;
+  }).catch(() => null);
+
+  return cached || await networkFetch;
+}
+
+// Cache First with TTL check
+async function cacheFirstWithTTL(request, cacheName, maxAgeSeconds) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+
+  if (cached) {
+    const date = cached.headers.get('date');
+    if (date) {
+      const age = (Date.now() - new Date(date).getTime()) / 1000;
+      if (age < maxAgeSeconds) return cached;
+    } else {
+      return cached;
+    }
+  }
+
+  try {
+    const response = await fetch(request);
+    if (response.ok) cache.put(request, response.clone());
+    return response;
+  } catch {
+    return cached;
+  }
 }
 
 // Push notifications
 self.addEventListener('push', (event) => {
-  if (event.data) {
-    const data = event.data.json();
-    const options = {
+  if (!event.data) return;
+  const data = event.data.json();
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
       body: data.body,
       icon: '/logo.png',
       badge: '/logo.png',
-      vibrate: [100, 50, 100],
-      data: {
-        dateOfArrival: Date.now(),
-        primaryKey: 1
-      }
-    };
-
-    event.waitUntil(
-      self.registration.showNotification(data.title, options)
-    );
-  }
+    })
+  );
 });
 
-// Notification click
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  event.waitUntil(
-    clients.openWindow('/')
-  );
+  event.waitUntil(clients.openWindow('/'));
 });

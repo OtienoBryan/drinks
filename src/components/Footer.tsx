@@ -3,16 +3,35 @@ import { Phone, MapPin, Mail } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white" aria-label="Site footer">
-      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
+    <footer
+      className="bg-gray-900 text-white"
+      aria-label="Site footer"
+      itemScope
+      itemType="https://schema.org/WPFooter"
+    >
+      <div
+        className="container mx-auto px-3 sm:px-4 py-4 sm:py-6"
+        itemScope
+        itemType="https://schema.org/LocalBusiness"
+      >
+        <meta itemProp="name" content="Drinks Avenue" />
+        <meta itemProp="telephone" content="+254790831798" />
+        <meta itemProp="email" content="support@drinksavenue.com" />
+        <meta itemProp="url" content="https://www.drinksavenue.com/" />
+        <meta itemProp="priceRange" content="$$" />
         {/* Compact 4-Column Layout */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
           {/* Company Info */}
           <div className="col-span-2 sm:col-span-1 space-y-2">
-            <h3 className="text-lg font-bold text-white">Drinks Avenue</h3>
-            <p className="text-gray-300 text-xs leading-relaxed">
+            <h3 className="text-lg font-bold text-white" itemProp="name">Drinks Avenue</h3>
+            <p className="text-gray-300 text-xs leading-relaxed" itemProp="description">
               Premium drinks delivery with 24 hour delivery services across Nairobi and Kenya.
             </p>
+            <div itemProp="address" itemScope itemType="https://schema.org/PostalAddress" className="hidden">
+              <meta itemProp="addressLocality" content="Nairobi" />
+              <meta itemProp="addressCountry" content="KE" />
+              <meta itemProp="addressRegion" content="Nairobi County" />
+            </div>
             <div className="flex space-x-2">
               <a
                 href="https://www.facebook.com/dalalidrinks"
@@ -27,10 +46,10 @@ const Footer = () => {
                 </svg>
               </a>
               <a
-                href="https://www.twitter.com/dalalidrinks"
+                href="https://x.com/dalalidrinks"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Drinks Avenue on Twitter / X"
+                aria-label="Drinks Avenue on X (Twitter)"
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 <span className="sr-only">Twitter</span>
@@ -109,11 +128,11 @@ const Footer = () => {
         <div className="border-t border-gray-800 mt-4 pt-4">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
             <p className="text-gray-400 text-xs text-center sm:text-left">
-              © 2025 Drinks Avenue. All rights reserved. Must be 18+ to order.
+              © {new Date().getFullYear()} Drinks Avenue. All rights reserved. Must be 18+ to order.
             </p>
             <div className="flex gap-4">
-              <Link to="/contact" className="text-gray-400 hover:text-white transition-colors text-xs">Privacy</Link>
-              <Link to="/contact" className="text-gray-400 hover:text-white transition-colors text-xs">Terms</Link>
+              <Link to="/contact#privacy" className="text-gray-400 hover:text-white transition-colors text-xs">Privacy Policy</Link>
+              <Link to="/contact#terms" className="text-gray-400 hover:text-white transition-colors text-xs">Terms of Service</Link>
               <a href="/sitemap.xml" className="text-gray-400 hover:text-white transition-colors text-xs">Sitemap</a>
             </div>
           </div>
