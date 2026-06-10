@@ -149,11 +149,11 @@ const Brands = () => {
           <title>{`${selectedBrandName} Drinks | Buy ${selectedBrandName} Online in Kenya | Drinks Avenue`}</title>
           <meta name="description" content={`Shop ${selectedBrandName} drinks online in Kenya. Browse the full ${selectedBrandName} range including wines, beers, spirits and more. Fast delivery across Nairobi and Kenya with Drinks Avenue.`} />
           <meta name="robots" content="index, follow" />
-          <link rel="canonical" href={`https://www.drinksavenue.com/brands/${encodeURIComponent((selectedBrandName || '').toLowerCase().replace(/\s+/g, '-'))}`} />
+          <link rel="canonical" href={`https://www.drinksavenue.co.ke/brands/${encodeURIComponent((selectedBrandName || '').toLowerCase().replace(/\s+/g, '-'))}`} />
           <meta property="og:title" content={`${selectedBrandName} Drinks | Drinks Avenue Kenya`} />
           <meta property="og:description" content={`Shop ${selectedBrandName} drinks online. Fast delivery across Nairobi and Kenya.`} />
           <meta property="og:type" content="website" />
-          <meta property="og:image" content="https://www.drinksavenue.com/logo.png" />
+          <meta property="og:image" content="https://www.drinksavenue.co.ke/logo.png" />
         </Helmet>
         <Navigation />
         
@@ -260,12 +260,12 @@ const Brands = () => {
         <title>Drinks Brands in Kenya | Wine, Beer &amp; Spirits Brands | Drinks Avenue</title>
         <meta name="description" content="Browse all alcohol brands available at Drinks Avenue Kenya. Shop Johnnie Walker, Absolut, Jack Daniel's, Heineken, and hundreds more premium drinks brands with fast delivery in Nairobi." />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://www.drinksavenue.com/brands" />
+        <link rel="canonical" href="https://www.drinksavenue.co.ke/brands" />
         <meta property="og:title" content="Drinks Brands in Kenya | Drinks Avenue" />
         <meta property="og:description" content="Browse all premium drinks brands at Drinks Avenue. Fast alcohol delivery across Nairobi and Kenya." />
-        <meta property="og:url" content="https://www.drinksavenue.com/brands" />
+        <meta property="og:url" content="https://www.drinksavenue.co.ke/brands" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://www.drinksavenue.com/logo.png" />
+        <meta property="og:image" content="https://www.drinksavenue.co.ke/logo.png" />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="Drinks Brands | Drinks Avenue Kenya" />
         <meta name="twitter:description" content="Browse all premium drinks brands available at Drinks Avenue with fast delivery across Kenya." />

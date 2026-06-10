@@ -2,12 +2,12 @@
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Static pages sitemap -->
   <sitemap>
-    <loc>https://www.drinksavenue.com/sitemap-pages.xml</loc>
+    <loc>https://www.drinksavenue.co.ke/sitemap-pages.xml</loc>
     <lastmod>2026-05-10</lastmod>
   </sitemap>
   <!-- Dynamic product pages sitemap (served by API) -->
   <sitemap>
-    <loc>https://www.drinksavenue.com/api/sitemap-products.xml</loc>
+    <loc>https://www.drinksavenue.co.ke/api/sitemap-products.xml</loc>
     <lastmod>2026-05-10</lastmod>
   </sitemap>
 </sitemapindex>

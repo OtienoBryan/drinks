@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -30,6 +30,8 @@ const Account = createLazyComponent(() => import("./pages/Account"), "Loading ac
 const Orders = createLazyComponent(() => import("./pages/Orders"), "Loading orders...");
 const Offers = createLazyComponent(() => import("./pages/Offers"), "Loading offers...");
 const Featured = createLazyComponent(() => import("./pages/Featured"), "Loading featured products...");
+const Blog = createLazyComponent(() => import("./pages/Blog"), "Loading blog posts...");
+const BlogDetail = createLazyComponent(() => import("./pages/BlogDetail"), "Loading blog post...");
 const Brands = createLazyComponent(() => import("./pages/Brands"), "Loading brands...");
 const Origin = createLazyComponent(() => import("./pages/Origin"), "Loading origins...");
 const Sitemap = createLazyComponent(() => import("./pages/Sitemap"), "Loading...");
@@ -98,6 +100,8 @@ const App = () => {
                 <Route path="/account" element={<Account />} />
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/offers" element={<Offers />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogDetail />} />
                 <Route path="/featured" element={<Featured />} />
                 <Route path="/brands/:brandName" element={<Brands />} />
                 <Route path="/brands" element={<Brands />} />

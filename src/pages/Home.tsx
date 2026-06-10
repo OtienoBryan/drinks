@@ -469,7 +469,7 @@ const Home = memo(() => {
         <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
         
         {/* LCP Optimization - Preload hero image */}
-        <link rel="preload" href="/slider/5.png" as="image" type="image/png" fetchPriority="high" />
+        <link rel="preload" href="/slider/5.png" as="image" type="image/png" fetchpriority="high" />
         
         {/* Open Graph Tags - Enhanced */}
         <meta property="og:title" content="24 Hour Drinks Delivery Kenya | Dial a Drink | Chupa Chup | Drinks Avenue" />
@@ -556,7 +556,7 @@ const Home = memo(() => {
                 className="hero-image"
                 loading="eager"
                 decoding="async"
-                fetchPriority="high"
+                fetchpriority="high"
                 width="1920"
                 height="1080"
                 sizes="100vw"

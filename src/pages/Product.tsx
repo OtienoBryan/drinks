@@ -451,7 +451,7 @@ const Product = () => {
         <link rel="canonical" href={`${window.location.origin}/product/${productSlug(product)}`} />
         
         {product.images?.[0] && (
-          <link rel="preload" href={product.images[0]} as="image" fetchPriority="high" />
+          <link rel="preload" href={product.images[0]} as="image" fetchpriority="high" />
         )}
         
         {/* Open Graph Tags - Enhanced */}
@@ -549,7 +549,7 @@ const Product = () => {
                 decoding="async"
                 width="520"
                 height="520"
-                fetchPriority="high"
+                fetchpriority="high"
                 itemProp="image"
               />
             </div>

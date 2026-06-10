@@ -5,6 +5,6 @@ Disallow: /account
 Disallow: /orders
 Disallow: /cart
 
-Sitemap: https://www.drinksavenue.com/sitemap.xml
-Sitemap: https://www.drinksavenue.com/api/sitemap-products.xml
-Host: www.drinksavenue.com
+Sitemap: https://www.drinksavenue.co.ke/sitemap.xml
+Sitemap: https://www.drinksavenue.co.ke/api/sitemap-products.xml
+Host: www.drinksavenue.co.ke

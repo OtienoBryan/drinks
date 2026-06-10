@@ -65,6 +65,44 @@ export function useFeaturedProducts() {
   return { data: data || null, loading, error: error?.message || null };
 }
 
+export function useBlogs(enabled: boolean = true) {
+  const { data, isLoading: loading, error } = useQuery({
+    queryKey: ['blogs'],
+    queryFn: () => apiService.getBlogs(),
+    enabled,
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 15 * 60 * 1000,
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
+
+  return { data: data || [], loading, error: error?.message || null };
+}
+
+export function useBlog(identifier: string | number, enabled: boolean = true) {
+  const queryKey = ['blog', identifier];
+
+  const queryFn = async () => {
+    if (typeof identifier === 'number' || /^[0-9]+$/.test(String(identifier))) {
+      return apiService.getBlogById(Number(identifier));
+    }
+
+    return apiService.getBlogBySlug(String(identifier));
+  };
+
+  const { data, isLoading: loading, error } = useQuery({
+    queryKey,
+    queryFn,
+    enabled: enabled && !!identifier,
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 15 * 60 * 1000,
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
+
+  return { data: data || null, loading, error: error?.message || null };
+}
+
 export function useNewArrivals() {
   const { data, isLoading: loading, error } = useQuery({
     queryKey: ['new-arrivals'],

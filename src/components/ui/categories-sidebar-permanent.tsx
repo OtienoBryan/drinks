@@ -56,24 +56,25 @@ export function CategoriesSidebarPermanent({ categories, isLoading }: Categories
   }, []);
 
   return (
-    <aside className="hidden lg:fixed lg:top-16 lg:bottom-0 lg:left-0 lg:z-30 lg:flex lg:w-64 lg:flex-col overflow-visible">
-      <div className="flex flex-1 flex-col overflow-y-auto overflow-x-visible bg-white border-r border-gray-100 shadow-sm scrollbar-hide">
+    <aside className="hidden lg:fixed lg:top-16 lg:bottom-0 lg:left-0 lg:z-30 lg:flex lg:w-72 lg:flex-col overflow-visible">
+      <div className="flex h-full flex-col overflow-y-auto overflow-x-visible bg-gradient-to-b from-white via-slate-50 to-slate-100 border-r border-slate-200 shadow-[0_24px_80px_rgba(15,23,42,0.08)] scrollbar-hide">
 
         {/* Sidebar header */}
-        <div className="px-4 pt-5 pb-3 border-b border-gray-100">
-          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-[0.15em]">Browse</p>
-          <h2 className="text-sm font-bold text-gray-900 mt-0.5">Categories</h2>
+        <div className="px-5 pt-6 pb-5 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Browse</p>
+          <h2 className="mt-2 text-lg font-semibold text-slate-900">Shop by Category</h2>
+          <p className="mt-2 text-sm text-slate-500">Discover our most popular product categories and explore fresh arrivals.</p>
         </div>
 
         {/* Category list */}
-        <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-visible" aria-label="Product categories">
+        <nav className="flex-1 px-4 py-4 space-y-2" aria-label="Product categories">
           {isLoading ? (
-            <div className="flex items-center gap-2 px-3 py-3">
+            <div className="flex items-center gap-2 px-3 py-4 rounded-3xl bg-slate-50 text-sm text-slate-500">
               <div className="w-4 h-4 rounded-full border-2 border-wine border-t-transparent animate-spin" />
-              <span className="text-sm text-gray-400">Loading…</span>
+              Loading categories…
             </div>
           ) : categories.length === 0 ? (
-            <div className="px-3 py-3 text-sm text-gray-400">No categories available</div>
+            <div className="px-3 py-4 rounded-3xl bg-slate-50 text-sm text-slate-500">No categories available</div>
           ) : (
             categories.map((category) => {
               const active = isActiveCategory(category.path);
@@ -90,24 +91,23 @@ export function CategoriesSidebarPermanent({ categories, isLoading }: Categories
                 >
                   <Link
                     to={category.path}
-                    className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 relative ${
+                    className={`relative flex items-center justify-between gap-3 px-4 py-3 rounded-3xl text-sm font-semibold transition-all duration-150 ${
                       active
-                        ? "bg-wine/10 text-wine"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                        ? "bg-wine/10 text-wine shadow-sm ring-1 ring-wine/20"
+                        : "text-slate-700 hover:text-slate-900 hover:bg-white hover:shadow-sm"
                     }`}
                   >
-                    {/* Active left border accent */}
                     {active && (
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-wine rounded-full" />
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 h-3/4 w-1.5 rounded-full bg-wine" />
                     )}
 
-                    <span className="truncate">{category.name}</span>
+                    <span className="truncate pl-1">{category.name}</span>
 
                     {hasSubcategories && (
                       <ChevronRight
-                        className={`h-3.5 w-3.5 shrink-0 transition-transform duration-150 ${
-                          isHovered ? "rotate-90" : ""
-                        } ${active ? "text-wine/60" : "text-gray-300"}`}
+                        className={`h-4 w-4 shrink-0 transition-transform duration-150 ${
+                          isHovered ? "rotate-90 text-slate-500" : "text-slate-300"
+                        }`}
                       />
                     )}
                   </Link>
@@ -115,21 +115,21 @@ export function CategoriesSidebarPermanent({ categories, isLoading }: Categories
                   {/* Subcategory flyout */}
                   {hasSubcategories && isHovered && (
                     <div
-                      className="fixed w-52 bg-white border border-gray-100 rounded-xl shadow-xl z-[9999] py-2"
+                      className="fixed w-56 bg-white border border-slate-200 rounded-3xl shadow-2xl z-[9999] py-2"
                       style={{
-                        left: "272px",
+                        left: "292px",
                         top: (() => {
                           const el = categoryRefs.current[category.path];
-                          if (!el) return 80;
+                          if (!el) return 96;
                           const rect = el.getBoundingClientRect();
-                          return Math.min(rect.top, window.innerHeight - (category.subcategories!.length * 40 + 16));
+                          return Math.min(rect.top, window.innerHeight - (category.subcategories!.length * 44 + 20));
                         })(),
                       }}
                       onMouseEnter={() => handleSubcategoryMouseEnter(category.path)}
                       onMouseLeave={handleSubcategoryMouseLeave}
                     >
-                      <div className="px-3 pb-2 mb-1 border-b border-gray-100">
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{category.name}</p>
+                      <div className="px-4 pb-2 mb-2 border-b border-slate-200">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">{category.name}</p>
                       </div>
                       {category.subcategories!.map((sub) => (
                         <Link
@@ -142,13 +142,13 @@ export function CategoriesSidebarPermanent({ categories, isLoading }: Categories
                               hoverTimeoutRef.current = null;
                             }
                           }}
-                          className={`flex items-center gap-2 px-3 py-2 mx-1 text-sm rounded-lg transition-all duration-150 ${
+                          className={`flex items-center gap-2 px-4 py-3 mx-2 text-sm rounded-2xl transition-all duration-150 ${
                             location.pathname === sub.path
-                              ? "bg-wine/10 text-wine font-medium"
-                              : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                              ? "bg-wine/10 text-wine font-semibold"
+                              : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                           }`}
                         >
-                          <span className="w-1 h-1 rounded-full bg-current opacity-40 shrink-0" />
+                          <span className="w-2 h-2 rounded-full bg-slate-300 shrink-0" />
                           {sub.name}
                         </Link>
                       ))}
@@ -161,17 +161,17 @@ export function CategoriesSidebarPermanent({ categories, isLoading }: Categories
         </nav>
 
         {/* Bottom contact strip */}
-        <div className="px-4 py-4 border-t border-gray-100 space-y-1">
+        <div className="mt-auto px-5 py-5 border-t border-slate-200 bg-white/95 backdrop-blur-xl">
           <a
             href="tel:+254790831798"
-            className="flex items-center gap-2.5 text-xs text-gray-400 hover:text-wine transition-colors group"
+            className="flex items-center gap-3 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 transition hover:border-wine hover:bg-wine/5 hover:text-wine"
           >
-            <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-gray-50 group-hover:bg-wine/10 transition-colors">
-              <Phone className="h-3.5 w-3.5" />
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-wine text-white shadow-sm">
+              <Phone className="h-4 w-4" />
             </span>
             <div>
-              <p className="font-semibold text-gray-600 group-hover:text-wine transition-colors">0790 831798</p>
-              <p className="text-[10px] text-gray-400">Open 24 hours / 7 days</p>
+              <p className="font-semibold">Need help?</p>
+              <p className="text-xs text-slate-500">Call 0790 831798 — open 24/7</p>
             </div>
           </a>
         </div>

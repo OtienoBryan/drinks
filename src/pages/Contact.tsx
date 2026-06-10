@@ -102,7 +102,7 @@ const Contact = () => {
     { value: "partnership", label: "Partnership" }
   ];
 
-  const siteUrl = "https://www.drinksavenue.com";
+  const siteUrl = "https://www.drinksavenue.co.ke";
   const canonicalUrl = `${siteUrl}/contact`;
 
   const faqSchema = {

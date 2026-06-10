@@ -184,12 +184,12 @@ const Offers = () => {
         <title>Drinks Offers &amp; Deals | Discounted Alcohol Delivery Kenya | Drinks Avenue</title>
         <meta name="description" content="Shop the best drinks offers and deals in Kenya. Discounted wine, beer, whiskey, gin, vodka and spirits delivered to your door in Nairobi. Limited-time promotions on premium alcoholic beverages." />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://www.drinksavenue.com/offers" />
+        <link rel="canonical" href="https://www.drinksavenue.co.ke/offers" />
         <meta property="og:title" content="Drinks Offers &amp; Deals | Discounted Alcohol Delivery Kenya" />
         <meta property="og:description" content="Shop the best drinks offers and deals in Kenya. Discounted wine, beer, whiskey, gin, vodka and spirits with fast delivery in Nairobi." />
-        <meta property="og:url" content="https://www.drinksavenue.com/offers" />
+        <meta property="og:url" content="https://www.drinksavenue.co.ke/offers" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://www.drinksavenue.com/logo.png" />
+        <meta property="og:image" content="https://www.drinksavenue.co.ke/logo.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Drinks Offers &amp; Deals | Drinks Avenue Kenya" />
         <meta name="twitter:description" content="Shop discounted wine, beer, whiskey and spirits with fast delivery across Nairobi and Kenya." />

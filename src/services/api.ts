@@ -64,6 +64,20 @@ export interface Product {
   updatedAt: string;
 }
 
+export interface BlogPost {
+  id: number;
+  title: string;
+  content: string;
+  excerpt?: string;
+  featuredImage?: string;
+  isPublished: boolean;
+  author?: string;
+  tags?: string[];
+  slug?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ApiResponse<T> {
   data: T;
   success: boolean;
@@ -223,6 +237,19 @@ class ApiService {
 
   async getPopularWines(): Promise<Product[]> {
     return this.request<Product[]>('/products/popular-wines');
+  }
+
+  // Blogs
+  async getBlogs(): Promise<BlogPost[]> {
+    return this.request<BlogPost[]>('/admin/blogs');
+  }
+
+  async getBlogById(id: number): Promise<BlogPost> {
+    return this.request<BlogPost>(`/admin/blogs/${id}`);
+  }
+
+  async getBlogBySlug(slug: string): Promise<BlogPost> {
+    return this.request<BlogPost>(`/admin/blogs/slug/${encodeURIComponent(slug)}`);
   }
 
   // Helper method to get products by category name (for backward compatibility)
