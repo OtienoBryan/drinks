@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   Pagination,
   PaginationContent,
@@ -33,6 +34,7 @@ import {
 } from "lucide-react";
 import { useProducts, useProductsByCategoryName, useProductsByCategory, useCategories, useSubCategories } from "@/hooks/useApi";
 import { Product } from "@/services/api";
+import { formatPrice } from "@/data/products";
 import { LoadingWave, LoadingWine } from "@/components/ui/lottie-loader";
 
 const Category = () => {
@@ -196,6 +198,27 @@ const Category = () => {
   const paginatedProducts = useMemo(() => {
     return sortedProducts.slice(startIndex, endIndex);
   }, [sortedProducts, startIndex, endIndex]);
+
+  // Flatten products into price-list table rows - one row per SKU size
+  const categoryProductRows = useMemo(() => {
+    return sortedProducts.flatMap((product: any) => {
+      const base = {
+        product,
+        brand: product.brand || '—',
+        origin: product.origin || '—',
+        alcoholContent: product.alcoholContent ? `${product.alcoholContent}%` : '—',
+      };
+      if (product.skus && product.skus.length > 0) {
+        return product.skus.map((sku: any, idx: number) => ({
+          ...base,
+          key: `${product.id}-${sku.code || idx}`,
+          size: sku.code || '—',
+          price: sku.price,
+        }));
+      }
+      return [{ ...base, key: `${product.id}`, size: '—', price: product.price }];
+    });
+  }, [sortedProducts]);
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -818,6 +841,73 @@ const Category = () => {
                       </PaginationContent>
                     </Pagination>
                   </div>
+                )}
+
+                {/* Price List Table - crawlable product/price data for SEO */}
+                {categoryProductRows.length > 0 && (
+                  <section
+                    className="mt-6 sm:mt-8 md:mt-10"
+                    aria-label={`${categoryDisplayName} price list`}
+                    style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 800px' }}
+                  >
+                    <div className="mb-4 sm:mb-6">
+                      <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground tracking-tight">
+                        {categoryDisplayName} Price List in Kenya
+                      </h2>
+                      <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                        All {categoryDisplayName.toLowerCase()} products, sizes and prices — updated regularly. Order online for fast delivery in Nairobi.
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl border border-border/60 bg-card overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="whitespace-nowrap text-xs sm:text-sm">Product Name</TableHead>
+                            <TableHead className="whitespace-nowrap text-xs sm:text-sm">Brand</TableHead>
+                            <TableHead className="whitespace-nowrap text-xs sm:text-sm">Size</TableHead>
+                            <TableHead className="whitespace-nowrap text-xs sm:text-sm">Price</TableHead>
+                            <TableHead className="whitespace-nowrap text-xs sm:text-sm">Alcohol Content</TableHead>
+                            <TableHead className="whitespace-nowrap text-xs sm:text-sm">Country</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {categoryProductRows.map((row: any) => (
+                            <TableRow key={row.key}>
+                              <TableCell className="text-xs sm:text-sm font-medium">
+                                <Link
+                                  to={`/product/${productSlug(row.product)}`}
+                                  className="text-wine hover:underline"
+                                  title={`${row.product.name} — order online at Drinks Avenue`}
+                                >
+                                  {row.product.name}
+                                </Link>
+                              </TableCell>
+                              <TableCell className="text-xs sm:text-sm whitespace-nowrap">
+                                {row.brand !== '—' ? (
+                                  <Link
+                                    to={`/brands/${encodeURIComponent(row.brand)}`}
+                                    className="hover:text-wine hover:underline"
+                                    title={`All ${row.brand} products & prices in Kenya`}
+                                  >
+                                    {row.brand}
+                                  </Link>
+                                ) : (
+                                  row.brand
+                                )}
+                              </TableCell>
+                              <TableCell className="text-xs sm:text-sm whitespace-nowrap">{row.size}</TableCell>
+                              <TableCell className="text-xs sm:text-sm whitespace-nowrap font-semibold">
+                                {row.price != null ? formatPrice(row.price) : '—'}
+                              </TableCell>
+                              <TableCell className="text-xs sm:text-sm whitespace-nowrap">{row.alcoholContent}</TableCell>
+                              <TableCell className="text-xs sm:text-sm whitespace-nowrap">{row.origin}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </section>
                 )}
               </>
             )}

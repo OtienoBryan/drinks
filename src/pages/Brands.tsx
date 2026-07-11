@@ -4,7 +4,9 @@ import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ProductCard } from "@/components/ui/product-card";
+import { productSlug } from "@/lib/utils";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
@@ -89,6 +91,30 @@ const Brands = () => {
       return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
     });
   }, [brandProducts, sortOrder]);
+
+  // Flatten brand products into price-list table rows - one row per SKU size
+  const brandProductRows = useMemo(() => {
+    return sortedBrandProducts.flatMap((product: any) => {
+      const categoryName = typeof product.category === 'object'
+        ? (product.category?.name || '—')
+        : (product.category || '—');
+      const base = {
+        product,
+        categoryName,
+        origin: product.origin || '—',
+        alcoholContent: product.alcoholContent ? `${product.alcoholContent}%` : '—',
+      };
+      if (product.skus && product.skus.length > 0) {
+        return product.skus.map((sku: any, idx: number) => ({
+          ...base,
+          key: `${product.id}-${sku.code || idx}`,
+          size: sku.code || '—',
+          price: sku.price,
+        }));
+      }
+      return [{ ...base, key: `${product.id}`, size: '—', price: product.price }];
+    });
+  }, [sortedBrandProducts]);
 
   // Get the actual brand name with proper casing
   const selectedBrandName = useMemo(() => {
@@ -247,6 +273,59 @@ const Brands = () => {
             )}
           </div>
         </section>
+
+        {/* Price List Table - crawlable product/price data for SEO */}
+        {brandProductRows.length > 0 && (
+          <section className="py-8 sm:py-10 md:py-12 bg-gray-50/60 border-t" aria-label={`${selectedBrandName} price list`}>
+            <div className="container mx-auto px-3 sm:px-4">
+              <div className="mb-4 sm:mb-6">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground tracking-tight">
+                  {selectedBrandName} Price List in Kenya
+                </h2>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                  All {selectedBrandName} products, sizes and prices — updated regularly. Order online for fast delivery in Nairobi.
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-border/60 bg-card overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="whitespace-nowrap text-xs sm:text-sm">Product Name</TableHead>
+                      <TableHead className="whitespace-nowrap text-xs sm:text-sm">Size</TableHead>
+                      <TableHead className="whitespace-nowrap text-xs sm:text-sm">Price</TableHead>
+                      <TableHead className="whitespace-nowrap text-xs sm:text-sm">Alcohol Content</TableHead>
+                      <TableHead className="whitespace-nowrap text-xs sm:text-sm">Country</TableHead>
+                      <TableHead className="whitespace-nowrap text-xs sm:text-sm">Category</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {brandProductRows.map((row: any) => (
+                      <TableRow key={row.key}>
+                        <TableCell className="text-xs sm:text-sm font-medium">
+                          <Link
+                            to={`/product/${productSlug(row.product)}`}
+                            className="text-wine hover:underline"
+                            title={`${row.product.name} — order online at Drinks Avenue`}
+                          >
+                            {row.product.name}
+                          </Link>
+                        </TableCell>
+                        <TableCell className="text-xs sm:text-sm whitespace-nowrap">{row.size}</TableCell>
+                        <TableCell className="text-xs sm:text-sm whitespace-nowrap font-semibold">
+                          {row.price != null ? formatPrice(row.price) : '—'}
+                        </TableCell>
+                        <TableCell className="text-xs sm:text-sm whitespace-nowrap">{row.alcoholContent}</TableCell>
+                        <TableCell className="text-xs sm:text-sm whitespace-nowrap">{row.origin}</TableCell>
+                        <TableCell className="text-xs sm:text-sm whitespace-nowrap">{row.categoryName}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          </section>
+        )}
 
         <Footer />
       </div>

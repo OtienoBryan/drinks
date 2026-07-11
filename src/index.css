@@ -168,28 +168,28 @@ All colors MUST be HSL.
   @media (min-width: 1024px) {
     /* Add margin to page content that comes after navigation */
     body > #root > div > div:has(> section):not(:has(nav)):not(:has(footer)) {
-      margin-left: 18rem; /* 288px for w-72 sidebar */
+      margin-left: 14rem; /* 224px for w-56 sidebar */
     }
-    
+
     /* But keep navigation and footer full width */
     nav,
     footer {
       margin-left: 0 !important;
     }
-    
+
     /* Align hero/slider start after the permanent sidebar */
     section.hero-section,
     section[class*="hero"] {
-      margin-left: 18rem !important;
+      margin-left: 14rem !important;
       width: auto !important;
       position: relative;
       left: 0;
     }
-    
+
     /* Content containers should have margin */
     .container,
     main:not(:has(nav)) {
-      margin-left: 18rem;
+      margin-left: 14rem;
     }
   }
 }

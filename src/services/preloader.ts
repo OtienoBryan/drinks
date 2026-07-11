@@ -35,29 +35,48 @@ class ResourcePreloader {
     }
   }
 
-  // Preload critical routes in background
+  // Preload critical routes in background.
+  // Deliberately deferred until first user interaction (or a few seconds after
+  // full page load) so these chunk downloads never appear in the critical
+  // request chain / compete with LCP. Users only navigate after interacting,
+  // so the chunks are still warm by the time they're needed.
   preloadCriticalRoutes(): void {
     const criticalRoutes = [
       'Home',
-      'Category', 
+      'Category',
       'Product',
       'Cart'
     ];
 
-    // Use requestIdleCallback for non-blocking preloading
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(() => {
+    let started = false;
+    const start = () => {
+      if (started) return;
+      started = true;
+      const run = () => {
         criticalRoutes.forEach(route => {
           this.preloadRoute(route);
         });
+      };
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(run, { timeout: 4000 });
+      } else {
+        setTimeout(run, 200);
+      }
+    };
+
+    const arm = () => {
+      // First interaction = strongest signal navigation is coming
+      ['pointerdown', 'keydown', 'touchstart', 'mouseover', 'scroll'].forEach(evt => {
+        window.addEventListener(evt, start, { once: true, passive: true });
       });
+      // Fallback: idle users still get warmed chunks well after load
+      setTimeout(start, 6000);
+    };
+
+    if (document.readyState === 'complete') {
+      arm();
     } else {
-      // Fallback for browsers without requestIdleCallback
-      setTimeout(() => {
-        criticalRoutes.forEach(route => {
-          this.preloadRoute(route);
-        });
-      }, 100);
+      window.addEventListener('load', arm, { once: true });
     }
   }
 
@@ -97,10 +116,9 @@ class ResourcePreloader {
 
 export const resourcePreloader = new ResourcePreloader();
 
-// Critical images to preload
+// Critical images to preload (keep tiny — these download on every page load)
 export const CRITICAL_IMAGES = [
-  '/logo.png',
-  '/placeholder.svg',
+  '/logo3.webp',
   // Add other critical images here
 ];
 

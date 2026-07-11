@@ -3,11 +3,11 @@
   <!-- Static pages sitemap -->
   <sitemap>
     <loc>https://www.drinksavenue.co.ke/sitemap-pages.xml</loc>
-    <lastmod>2026-05-10</lastmod>
+    <lastmod>2026-07-11</lastmod>
   </sitemap>
   <!-- Dynamic product pages sitemap (served by API) -->
   <sitemap>
     <loc>https://www.drinksavenue.co.ke/api/sitemap-products.xml</loc>
-    <lastmod>2026-05-10</lastmod>
+    <lastmod>2026-07-11</lastmod>
   </sitemap>
 </sitemapindex>

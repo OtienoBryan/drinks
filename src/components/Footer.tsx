@@ -25,7 +25,7 @@ const Footer = () => {
           <div className="space-y-3 sm:space-y-2">
             <h3 className="text-base font-semibold text-white" itemProp="name">Drinks Avenue</h3>
             <p className="text-gray-300 text-xs leading-snug" itemProp="description">
-              Premium drinks delivery with 24 hour delivery services across Nairobi and Kenya.
+              Nairobi's 24 hour alcohol delivery service — the online liquor store near you, delivering whisky, wine, beer, gin &amp; spirits across Nairobi and Kenya.
             </p>
             <div itemProp="address" itemScope itemType="https://schema.org/PostalAddress" className="hidden">
               <meta itemProp="addressLocality" content="Nairobi" />
@@ -117,6 +117,21 @@ const Footer = () => {
               </div>
               <p className="text-gray-400 text-xs">Open 24 hours / 7 days</p>
             </div>
+          </div>
+        </div>
+
+        {/* Popular Searches - internal keyword links for SEO */}
+        <div className="border-t border-gray-800 mt-3 pt-3">
+          <h4 className="text-xs font-semibold text-white mb-2">Popular Searches</h4>
+          <div className="flex flex-wrap gap-x-3 gap-y-1.5 text-xs">
+            <Link to="/" className="text-gray-400 hover:text-white transition-colors">24 Hour Alcohol Delivery</Link>
+            <Link to="/" className="text-gray-400 hover:text-white transition-colors">Liquor Store Near Me</Link>
+            <Link to="/category/whisky" className="text-gray-400 hover:text-white transition-colors">Whisky Hub Kenya</Link>
+            <Link to="/category/wine" className="text-gray-400 hover:text-white transition-colors">Wine Delivery Nairobi</Link>
+            <Link to="/category/beer" className="text-gray-400 hover:text-white transition-colors">Beer Delivery Kenya</Link>
+            <Link to="/category/gin" className="text-gray-400 hover:text-white transition-colors">Gin Delivery</Link>
+            <Link to="/offers" className="text-gray-400 hover:text-white transition-colors">Drinks Offers This Week</Link>
+            <Link to="/" className="text-gray-400 hover:text-white transition-colors">Late Night Drinks Delivery</Link>
           </div>
         </div>
 

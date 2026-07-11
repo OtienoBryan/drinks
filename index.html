@@ -1,31 +1,43 @@
 <!doctype html>
 <html lang="en">
   <head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18300699254"></script>
+<!-- Google tag (gtag.js) — single loader for both Ads + Analytics, deferred
+     until after page load so it never competes with rendering (better mobile score).
+     Events fired before the library loads queue in dataLayer and are sent once it arrives. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'AW-18300699254');
-</script>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-J5LMY7KRH2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
   gtag('config', 'G-J5LMY7KRH2');
+  (function () {
+    var loaded = false;
+    function loadGtag() {
+      if (loaded) return;
+      loaded = true;
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-J5LMY7KRH2';
+      document.head.appendChild(s);
+    }
+    if (document.readyState === 'complete') {
+      setTimeout(loadGtag, 1500);
+    } else {
+      window.addEventListener('load', function () { setTimeout(loadGtag, 1500); });
+    }
+    // Load immediately on first interaction so conversions are never missed
+    ['pointerdown', 'keydown', 'touchstart'].forEach(function (evt) {
+      window.addEventListener(evt, loadGtag, { once: true, passive: true });
+    });
+  })();
 </script>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Drinks Avenue - 24 Hour Drinks Delivery Kenya | Dial a Drink | Chupa Chup</title>
-    <meta name="description" content="24 hour drinks delivery Kenya. Dial a drink service with premium alcoholic beverages delivered to your door. Wine, beer, spirits, Chupa Chup and more with fast delivery across Nairobi and Kenya." />
-    <meta name="keywords" content="drinks delivery kenya, dial a drink, chupa chup, 24 hour drinks delivery, alcohol delivery Kenya, wine delivery Nairobi, beer delivery Kenya, whiskey delivery, gin delivery, spirits delivery Kenya, online alcohol store, premium drinks delivery, alcohol delivery service, wine shop Nairobi, beer shop Kenya, spirits shop, alcohol online Kenya, drinks delivery Nairobi, buy alcohol online Kenya, alcohol delivery app, wine delivery app, beer delivery app, 24/7 drinks delivery, same day alcohol delivery Kenya" />
+    <title>24 Hour Alcohol Delivery Nairobi | Liquor Store Near Me - Drinks Avenue</title>
+    <meta name="description" content="24 hour alcohol delivery in Nairobi & across Kenya. Your online liquor store near you — whisky, wine, beer, gin & spirits delivered in 30 minutes, 24/7." />
+    <meta name="keywords" content="dial a drink, alcohol delivery, 24 hour delivery, liquor store near me, oaks and corks, whisky hub, chupa chup, drinks delivery kenya, 24 hour drinks delivery, alcohol delivery Kenya, alcohol delivery near me, alcohol delivery Nairobi, dial a drink kenya, dial a delivery, wine delivery Nairobi, beer delivery Kenya, whiskey delivery, whisky delivery Nairobi, gin delivery, spirits delivery Kenya, online liquor store, online alcohol store, premium drinks delivery, alcohol delivery service, liquor delivery near me, wine shop Nairobi, beer shop Kenya, spirits shop, alcohol online Kenya, drinks delivery Nairobi, buy alcohol online Kenya, alcohol delivery app, 24/7 drinks delivery, same day alcohol delivery Kenya, late night alcohol delivery Nairobi" />
     <meta name="author" content="Drinks Avenue" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow" />
@@ -46,12 +58,12 @@
       *,::before,::after{box-sizing:border-box}
       body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#fff}
       #root{min-height:100vh}
-      .hero-section{min-height:55vh;background-color:#f3f4f6;width:100%}
-      .hero-image-container{position:relative;width:100%;max-width:100%;overflow:hidden;background-color:#111827;height:55vmin}
+      .hero-section{background-color:#f3f4f6;width:100%}
+      .hero-image-container{position:relative;width:100%;max-width:100%;overflow:hidden;background-color:#111827;aspect-ratio:3/2;max-height:55vh}
       .hero-image{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
-      @media(min-width:640px){.hero-section{min-height:52vh}.hero-image-container{height:52vmin}}
-      @media(min-width:768px){.hero-section{min-height:62vh}.hero-image-container{height:62vmin}}
-      @media(min-width:1024px){.hero-section{min-height:50vh}.hero-image-container{height:50vmin}.hero-image{object-fit:cover}}
+      @media(min-width:640px){.hero-section{min-height:52vh}.hero-image-container{aspect-ratio:auto;max-height:none;height:52vh}}
+      @media(min-width:768px){.hero-section{min-height:62vh}.hero-image-container{height:62vh}}
+      @media(min-width:1024px){.hero-section{min-height:50vh}.hero-image-container{height:50vh}.hero-image{object-fit:cover}}
     </style>
 
     <!-- Favicon & Icons -->
@@ -73,8 +85,8 @@
     <meta property="og:site_name" content="Drinks Avenue" />
     <meta property="og:locale" content="en_KE" />
     <meta property="og:url" content="https://www.drinksavenue.co.ke/" />
-    <meta property="og:title" content="Drinks Avenue - Premium Drinks Delivered Fast" />
-    <meta property="og:description" content="Premium alcoholic beverages delivered to your door in 30 minutes. Wine, beer, spirits with age verification and secure checkout." />
+    <meta property="og:title" content="24 Hour Alcohol Delivery Nairobi - Drinks Avenue" />
+    <meta property="og:description" content="Whisky, wine, beer, gin & spirits delivered in 30 minutes. Your 24 hour online liquor store serving Nairobi and all of Kenya." />
     <meta property="og:image" content="https://www.drinksavenue.co.ke/logo.png" />
     <meta property="og:image:width" content="512" />
     <meta property="og:image:height" content="512" />
@@ -134,21 +146,25 @@
     }
     </script>
 
-    <!-- Static JSON-LD: LocalBusiness (critical for local SEO) -->
+    <!-- Static JSON-LD: LiquorStore / LocalBusiness (critical for "liquor store near me" local SEO) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Store",
+      "@type": "LiquorStore",
       "@id": "https://www.drinksavenue.co.ke/#store",
       "name": "Drinks Avenue",
-      "description": "24 hour drinks delivery service in Kenya. Order wine, beer, whiskey, gin, rum, tequila, vodka, and spirits with fast delivery across Nairobi and Kenya.",
+      "alternateName": ["Drinks Avenue Kenya"],
+      "slogan": "Drinks delivered in 30 minutes, 24 hours a day",
+      "description": "24 hour alcohol delivery liquor store in Nairobi, Kenya. Order whisky, wine, beer, gin, rum, tequila, vodka and spirits online with fast 30-minute delivery across Nairobi and same-day delivery countrywide.",
+      "keywords": "dial a drink, alcohol delivery, 24 hour delivery, liquor store near me, whisky hub, chupa chup, drinks delivery Nairobi",
       "url": "https://www.drinksavenue.co.ke/",
       "telephone": "+254790831798",
       "email": "support@drinksavenue.com",
       "image": "https://www.drinksavenue.co.ke/logo.png",
+      "logo": "https://www.drinksavenue.co.ke/logo.png",
       "priceRange": "$$",
       "currenciesAccepted": "KES",
-      "paymentAccepted": "Cash, Credit Card, Mobile Money",
+      "paymentAccepted": "Cash, Credit Card, M-Pesa, Mobile Money",
       "openingHoursSpecification": [
         {
           "@type": "OpeningHoursSpecification",
@@ -168,16 +184,43 @@
         "latitude": -1.2921,
         "longitude": 36.8219
       },
-      "areaServed": {
-        "@type": "Country",
-        "name": "Kenya"
-      },
+      "areaServed": [
+        { "@type": "City", "name": "Nairobi" },
+        { "@type": "Country", "name": "Kenya" }
+      ],
       "hasMap": "https://maps.google.com/maps?q=-1.2921,36.8219",
+      "makesOffer": [
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "24 Hour Alcohol Delivery Nairobi" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Order by Phone Drinks Delivery" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Whisky, Wine, Beer, Gin & Spirits Delivery" } }
+      ],
       "sameAs": [
         "https://www.facebook.com/dalalidrinks",
         "https://www.instagram.com/dalalidrinks",
         "https://x.com/dalalidrinks"
       ]
+    }
+    </script>
+
+    <!-- Static JSON-LD: WebSite with SearchAction (sitelinks search box) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://www.drinksavenue.co.ke/#website",
+      "name": "Drinks Avenue",
+      "alternateName": "Drinks Avenue Kenya - 24 Hour Alcohol Delivery",
+      "url": "https://www.drinksavenue.co.ke/",
+      "inLanguage": "en-KE",
+      "publisher": { "@id": "https://www.drinksavenue.co.ke/#organization" },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.drinksavenue.co.ke/?search={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
     }
     </script>
   </head>

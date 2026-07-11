@@ -302,7 +302,7 @@ const Navigation = () => {
             <Link to="/" className="flex items-center gap-1 sm:gap-2">
               <div className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-full overflow-hidden bg-white p-1">
                 <img 
-                  src="/logo3.png"
+                  src="/logo3.webp"
                   alt="Drinks Avenue" 
                   className="h-full w-full object-contain block" 
                   onError={(e) => {
@@ -731,7 +731,7 @@ const Navigation = () => {
               <div className="flex items-center gap-2.5">
                 <div className="h-8 w-8 rounded-full overflow-hidden bg-gray-50 p-1">
                   <img
-                    src="/logo3.png"
+                    src="/logo3.webp"
                     alt="Drinks Avenue"
                     className="h-full w-full object-contain"
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}

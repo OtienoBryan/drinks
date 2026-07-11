@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
@@ -46,25 +47,6 @@ const Home = memo(() => {
   useEffect(() => {
     setSearchQuery(urlSearchQuery);
   }, [urlSearchQuery]);
-
-  // Memoized helper function to get category images
-  const getCategoryImage = useCallback((categoryName: string) => {
-    const name = categoryName.toLowerCase();
-    if (name.includes('wine')) return '/cat/wine.png'; // Wine image
-    if (name.includes('beer')) return '/cat/beer.png'; // Beer image
-    if (name.includes('gin')) return '/cat/gin.png'; // Gin image
-    if (name.includes('liqueur')) return '/cat/liq.png'; // Liqueur image
-    if (name.includes('rum')) return '/cat/rum.png'; // Rum image
-    if (name.includes('tequila')) return '/cat/tequila.png'; // Tequila image
-    if (name.includes('vodka')) return '/cat/vodka.png'; // Vodka image
-    if (name.includes('vapes')) return '/cat/vapes.png'; // Vodka image
-    if (name.includes('whisky')) return '/cat/whiskey.png'; // Whiskey image
-    //if (name.includes('spirit') || name.includes('vodka')) return '/slider/1.jpg'; // Spirits image
-    if (name.includes('champagne') || name.includes('sparkling')) return '/slider/4.webp'; // Sparkling image
-    if (name.includes('cocktail') || name.includes('mixer')) return '/slider/1.jpg'; // Cocktail image
-    if (name.includes('convenience') || name.includes('more')) return '/slider/3.jpg'; // Convenience image
-    return '/slider/2.webp'; // Default wine image
-  }, []);
 
   // Memoized banner slider images - LCP optimized
   const bannerImages = useMemo(() => [
@@ -132,6 +114,41 @@ const Home = memo(() => {
       }
     });
     return Array.from(brands);
+  }, [allProducts]);
+
+  // Shop by Brand: expand/collapse state per category group
+  const [expandedBrandCats, setExpandedBrandCats] = useState<Record<string, boolean>>({});
+
+  // Brands grouped by category for the Shop by Brand section, most popular first
+  const brandsByCategory = useMemo(() => {
+    if (!allProducts || !Array.isArray(allProducts)) return [];
+    const groups = new Map<string, Map<string, { name: string; count: number }>>();
+    (allProducts as any[]).forEach((product: any) => {
+      if (!product.brand) return;
+      const catName = typeof product.category === 'object'
+        ? product.category?.name
+        : product.category;
+      if (!catName) return;
+      if (!groups.has(catName)) groups.set(catName, new Map());
+      const brands = groups.get(catName)!;
+      const key = product.brand.toLowerCase();
+      if (!brands.has(key)) brands.set(key, { name: product.brand, count: 0 });
+      brands.get(key)!.count++;
+    });
+    const priority = ["whisky", "champagne", "cognac", "vodka", "brandy", "wine", "beer", "gin", "rum", "tequila", "liqueur"];
+    const rank = (category: string) => {
+      const idx = priority.findIndex((p) => category.toLowerCase().includes(p));
+      return idx === -1 ? 99 : idx;
+    };
+    return Array.from(groups.entries())
+      .map(([category, brands]) => ({
+        category,
+        brands: Array.from(brands.values())
+          .sort((a, b) => b.count - a.count)
+          .map((b) => b.name),
+      }))
+      .filter((group) => group.brands.length > 0)
+      .sort((a, b) => rank(a.category) - rank(b.category) || a.category.localeCompare(b.category));
   }, [allProducts]);
 
   // Check if search query exactly matches a brand name
@@ -280,18 +297,50 @@ const Home = memo(() => {
   const localBusinessData = useMemo(() => {
     return {
       "@context": "https://schema.org",
-      "@type": "Store",
+      "@type": "LiquorStore",
+      "@id": `${canonicalUrl}#store`,
       "name": "Drinks Avenue",
+      "alternateName": ["Drinks Avenue Kenya"],
+      "slogan": "Drinks delivered in 30 minutes, 24 hours a day",
+      "description": "24 hour alcohol delivery liquor store in Nairobi, Kenya. Order whisky, wine, beer, gin, rum, tequila, vodka and spirits online with fast 30-minute delivery across Nairobi and same-day delivery countrywide.",
+      "keywords": "dial a drink, alcohol delivery, 24 hour delivery, liquor store near me, whisky hub, chupa chup, drinks delivery Nairobi",
       "url": canonicalUrl,
       "image": `${siteUrl}/logo.png`,
-      "telephone": "0790 831798",
+      "logo": `${siteUrl}/logo.png`,
+      "telephone": "+254790831798",
+      "email": "support@drinksavenue.com",
       "priceRange": "$$",
-      "areaServed": "Kenya",
+      "currenciesAccepted": "KES",
+      "paymentAccepted": "Cash, Credit Card, M-Pesa, Mobile Money",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          "opens": "00:00",
+          "closes": "23:59"
+        }
+      ],
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -1.2921,
+        "longitude": 36.8219
+      },
+      "hasMap": "https://maps.google.com/maps?q=-1.2921,36.8219",
+      "areaServed": [
+        { "@type": "City", "name": "Nairobi" },
+        { "@type": "Country", "name": "Kenya" }
+      ],
       "address": {
         "@type": "PostalAddress",
         "addressCountry": "KE",
         "addressLocality": "Nairobi",
+        "addressRegion": "Nairobi County"
       },
+      "makesOffer": [
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "24 Hour Alcohol Delivery Nairobi" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Order by Phone Drinks Delivery" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Whisky, Wine, Beer, Gin & Spirits Delivery" } }
+      ],
       "sameAs": [
         "https://www.facebook.com/dalalidrinks",
         "https://www.instagram.com/dalalidrinks",
@@ -373,47 +422,58 @@ const Home = memo(() => {
     };
   }, [featuredProducts, siteUrl]);
 
-  // FAQ structured data for common questions
+  // Home page FAQs - single source of truth for both the visible FAQ section
+  // and the FAQPage JSON-LD (Google requires the schema to match on-page content)
+  const homeFaqs = useMemo(() => [
+    {
+      question: "Do you offer 24 hour alcohol delivery in Nairobi?",
+      answer: "Yes. Drinks Avenue is a 24 hour alcohol delivery service — order any time, day or night, and we deliver whisky, wine, beer, gin, vodka and spirits to your door in Nairobi in as little as 30 minutes. We also offer late night alcohol delivery when most liquor stores are closed."
+    },
+    {
+      question: "How do I order drinks from Drinks Avenue?",
+      answer: "Ordering is easy: browse our online liquor store, add your drinks to the cart and check out, or simply call 0790 831798 and place your order by phone or WhatsApp. Our riders deliver across Nairobi 24/7."
+    },
+    {
+      question: "Are you the liquor store near me?",
+      answer: "If you are in Nairobi or anywhere in Kenya, yes! Drinks Avenue is your online liquor store near you — no matter your neighbourhood, we bring the liquor store to your doorstep with fast delivery in Westlands, Kilimani, Lavington, Karen, Kileleshwa, Ruaka, Kasarani, the CBD and beyond."
+    },
+    {
+      question: "What makes Drinks Avenue different from other alcohol delivery services in Kenya?",
+      answer: "Drinks Avenue stands out with true 24 hour delivery, 30-minute average delivery times in Nairobi, competitive prices, weekly offers and a huge selection of whisky, wine, beer, gin and spirits."
+    },
+    {
+      question: "What types of drinks do you deliver?",
+      answer: "We deliver a wide selection of premium drinks including whisky, wine, beer, gin, rum, tequila, vodka, brandy, cognac, champagne, liqueurs and mixers. Browse our whisky collection for single malts and blended Scotch, or explore wines from around the world."
+    },
+    {
+      question: "Do you deliver alcohol outside Nairobi?",
+      answer: "Yes, we deliver premium drinks and spirits across Kenya, including Mombasa, Kisumu, Nakuru, Eldoret and Thika. Delivery times vary by location — Nairobi orders typically arrive within 30 minutes."
+    },
+    {
+      question: "What payment methods do you accept?",
+      answer: "We accept M-Pesa, mobile money, credit/debit cards, and cash on delivery for your convenience. All online payments are secure."
+    },
+    {
+      question: "Is there a minimum age to order?",
+      answer: "Yes. You must be 18 years or older to order alcohol in Kenya. Our riders verify age on delivery, and we deliver responsibly in line with Kenyan law."
+    }
+  ], []);
+
+  // FAQ structured data derived from the visible FAQs
   const faqStructuredData = useMemo(() => {
     return {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "How fast is your alcohol delivery service?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "We offer fast 30-minute delivery service across Nairobi and Kenya. Orders are processed quickly and delivered fresh to your doorstep."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What types of drinks do you deliver?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "We deliver a wide selection of premium drinks including wine, beer, whiskey, gin, rum, tequila, vodka, spirits, and more. Browse our extensive collection online."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Do you deliver alcohol outside Nairobi?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, we deliver premium drinks and spirits across Kenya. Delivery times may vary depending on your location."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What payment methods do you accept?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "We accept various payment methods including mobile money, credit/debit cards, and cash on delivery for your convenience."
-          }
+      "mainEntity": homeFaqs.map((faq) => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer
         }
-      ]
+      }))
     };
-  }, []);
+  }, [homeFaqs]);
 
   // Optimized loading state - only show if critical data is loading
   if (categoriesLoading) {
@@ -454,9 +514,9 @@ const Home = memo(() => {
     <div className="min-h-screen bg-background">
       {/* SEO Meta Tags - Enhanced */}
       <Helmet>
-        <title>24 Hour Drinks Delivery Kenya | Dial a Drink | Chupa Chup | Drinks Avenue</title>
-        <meta name="description" content="24/7 drinks delivery Kenya — Dial a drink for wine, beer, whiskey, gin, rum & spirits. Same-day delivery in Nairobi. Drinks Avenue - Your trusted alcohol delivery service." />
-        <meta name="keywords" content="drinks delivery kenya, dial a drink, chupa chup, 24 hour drinks delivery, 24/7 drinks delivery, alcohol delivery Kenya, wine delivery Nairobi, beer delivery Kenya, whiskey delivery, gin delivery, spirits delivery Kenya, online alcohol store, premium drinks delivery, alcohol delivery service, wine shop Nairobi, beer shop Kenya, spirits shop, alcohol online Kenya, drinks delivery Nairobi, buy alcohol online Kenya, alcohol delivery app, wine delivery app, beer delivery app, same day alcohol delivery Kenya, fast drinks delivery Nairobi, instant drinks delivery Kenya" />
+        <title>24 Hour Alcohol Delivery Nairobi | Liquor Store Near Me - Drinks Avenue</title>
+        <meta name="description" content="24 hour alcohol delivery in Nairobi & across Kenya. Your online liquor store near you — whisky, wine, beer, gin & spirits delivered in 30 minutes, 24/7." />
+        <meta name="keywords" content="dial a drink, alcohol delivery, 24 hour delivery, liquor store near me, oaks and corks, whisky hub, chupa chup, drinks delivery kenya, 24 hour drinks delivery, 24/7 drinks delivery, alcohol delivery Kenya, alcohol delivery near me, alcohol delivery Nairobi, dial a drink kenya, dial a delivery, wine delivery Nairobi, beer delivery Kenya, whiskey delivery, whisky delivery Nairobi, gin delivery, spirits delivery Kenya, online liquor store, online alcohol store, premium drinks delivery, alcohol delivery service, liquor delivery near me, wine shop Nairobi, beer shop Kenya, spirits shop, alcohol online Kenya, drinks delivery Nairobi, buy alcohol online Kenya, alcohol delivery app, same day alcohol delivery Kenya, fast drinks delivery Nairobi, late night alcohol delivery Nairobi" />
         <meta name="author" content="Drinks Avenue" />
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <meta name="googlebot" content="index, follow" />
@@ -468,12 +528,13 @@ const Home = memo(() => {
         <link rel="alternate" hrefLang="en-ke" href={canonicalUrl} />
         <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
         
-        {/* LCP Optimization - Preload hero image */}
-        <link rel="preload" href="/slider/5.png" as="image" type="image/png" fetchpriority="high" />
+        {/* LCP Optimization - Preload responsive hero image (WebP, sized per viewport) */}
+        <link rel="preload" href="/slider/5-mobile.webp" as="image" type="image/webp" media="(max-width: 640px)" fetchpriority="high" />
+        <link rel="preload" href="/slider/5-desktop.webp" as="image" type="image/webp" media="(min-width: 641px)" fetchpriority="high" />
         
         {/* Open Graph Tags - Enhanced */}
-        <meta property="og:title" content="24 Hour Drinks Delivery Kenya | Dial a Drink | Chupa Chup | Drinks Avenue" />
-        <meta property="og:description" content="24 hour drinks delivery Kenya - Dial a drink and get premium alcoholic beverages delivered fast. Order wine, beer, whiskey, gin, rum, tequila, vodka, Chupa Chup, and spirits with same-day delivery across Nairobi and Kenya." />
+        <meta property="og:title" content="24 Hour Alcohol Delivery Nairobi - Drinks Avenue" />
+        <meta property="og:description" content="Premium alcohol delivered fast, 24 hours a day. Order whisky, wine, beer, gin, rum, tequila, vodka and spirits — the online liquor store near you, delivering across Nairobi and Kenya." />
         <meta property="og:image" content={`${siteUrl}/logo.png`} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -486,8 +547,8 @@ const Home = memo(() => {
         
         {/* Twitter Card Tags - Enhanced */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Drinks Avenue - Premium Alcohol Delivery Service | Kenya" />
-        <meta name="twitter:description" content="Order premium drinks online with fast 30-minute delivery across Kenya. Wide selection of wine, beer, whiskey, gin, rum, and spirits." />
+        <meta name="twitter:title" content="24 Hour Alcohol Delivery Nairobi - Drinks Avenue" />
+        <meta name="twitter:description" content="24 hour alcohol delivery in Nairobi. Whisky, wine, beer, gin, rum & spirits delivered in 30 minutes from the liquor store near you." />
         <meta name="twitter:image" content={`${siteUrl}/logo.png`} />
         <meta name="twitter:image:alt" content="Drinks Avenue - Premium Alcohol Delivery Service" />
         
@@ -526,27 +587,20 @@ const Home = memo(() => {
       {/* Hero Section - Optimized for LCP and Mobile with SEO */}
       <section className="relative w-full bg-gray-100 hero-section" aria-label="Hero Banner" itemScope itemType="https://schema.org/WebPageElement">
         <div className="w-full max-w-full">
-          <div className="relative h-[55vh] sm:h-[52vh] md:h-[62vh] lg:h-[50vh] w-full max-w-full overflow-hidden shadow-2xl hero-image-container">
+          <div className="relative aspect-[3/2] h-auto max-h-[55vh] sm:aspect-auto sm:h-[52vh] md:h-[62vh] lg:h-[50vh] w-full max-w-full overflow-hidden shadow-2xl hero-image-container">
             <picture>
-              {/* Mobile-first: optimized for mobile devices */}
+              {/* Mobile: small WebP (~100 KB vs 2.9 MB PNG) for fast LCP */}
               <source
                 media="(max-width: 640px)"
-                srcSet="/slider/5.png"
-                type="image/png"
+                srcSet="/slider/5-mobile.webp"
+                type="image/webp"
                 sizes="100vw"
               />
-              {/* Tablet */}
+              {/* Tablet & Desktop: full-size WebP */}
               <source
-                media="(min-width: 641px) and (max-width: 1024px)"
-                srcSet="/slider/5.png"
-                type="image/png"
-                sizes="100vw"
-              />
-              {/* Desktop */}
-              <source
-                media="(min-width: 1025px)"
-                srcSet="/slider/5.png"
-                type="image/png"
+                media="(min-width: 641px)"
+                srcSet="/slider/5-desktop.webp"
+                type="image/webp"
                 sizes="100vw"
               />
               {/* Fallback img element with optimized attributes and SEO */}
@@ -557,8 +611,8 @@ const Home = memo(() => {
                 loading="eager"
                 decoding="async"
                 fetchpriority="high"
-                width="1920"
-                height="1080"
+                width="1536"
+                height="1024"
                 sizes="100vw"
                 itemProp="image"
                 style={{
@@ -579,10 +633,10 @@ const Home = memo(() => {
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="text-center px-4">
                 <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-4 drop-shadow-lg" itemProp="headline">
-                  Premium Alcohol Delivery in Kenya
+                  24 Hour Alcohol Delivery in Nairobi
                 </h1>
                 <p className="text-white text-sm sm:text-base md:text-lg lg:text-xl drop-shadow-md max-w-2xl mx-auto" itemProp="description">
-                  Fast 30-minute delivery of wine, beer, whiskey, gin, rum, and spirits across Nairobi and Kenya
+                  Whisky, wine, beer, gin &amp; spirits delivered in 30 minutes from the liquor store near you, 24/7 across Kenya
                 </p>
               </div>
             </div>
@@ -590,58 +644,6 @@ const Home = memo(() => {
         </div>
       </section>
 
-
-      {/* All Categories - From Database */}
-       <section className="py-3 sm:py-4 md:py-6 lg:py-8 xl:py-10 bg-background hidden" aria-label="Product Categories">
-         <div className="container mx-auto px-3 sm:px-4">
-          
-          {categoriesLoading ? (
-            <div className="flex justify-center items-center py-8 sm:py-12">
-              <LoadingWave size="lg" />
-              <span className="ml-4 text-sm sm:text-lg text-muted-foreground">Loading categories...</span>
-            </div>
-          ) : categoriesError ? (
-            <div className="text-center py-8 sm:py-12">
-              <p className="text-destructive text-sm sm:text-base">Error loading categories</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 xl:grid-cols-10 gap-1 sm:gap-1 md:gap-2 lg:gap-3">
-              {(categories as any[])?.map((category) => (
-                <Link
-                  key={category.id}
-                  to={`/category/${category.name.toLowerCase()}`}
-                  className="group"
-                >
-                  <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group-hover:scale-105 group-active:scale-95 border-0 bg-gradient-to-br from-primary/5 to-primary/10 touch-manipulation">
-                    {/* Category Image Design */}
-                    <div className="h-12 sm:h-14 md:h-16 lg:h-18 flex flex-col items-center justify-center relative overflow-hidden p-1">
-                      {/* Category Image */}
-                      <div className="flex items-center justify-center mb-0">
-                        <img
-                          src={getCategoryImage(category.name)}
-                          alt={`${category.name} - Premium drinks category`}
-                          className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 object-cover rounded-lg opacity-80"
-                          loading="lazy"
-                          decoding="async"
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                          width="80"
-                          height="80"
-                        />
-                      </div>
-                      
-                      {/* Category Info Below Image */}
-                      <div className="text-center px-1">
-                        <h3 className="text-primary font-bold text-xs leading-tight truncate w-full">{category.name}</h3>
-                        <p className="text-primary/70 text-xs hidden xl:block">{category.description}</p>
-                      </div>
-                    </div>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
 
       {/* Offers of the Week Section - Enhanced SEO */}
       <section
@@ -940,7 +942,7 @@ const Home = memo(() => {
       </section>
 
       {/* Popular Wines Section */}
-      <section className="py-6 sm:py-8 md:py-10 bg-background" aria-label="Popular Wines">
+      <section className="py-6 sm:py-8 md:py-10 bg-background" aria-label="Popular Wines" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 900px' }}>
         <div className="container mx-auto px-3 sm:px-4">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5 sm:mb-6 md:mb-8">
             <div>
@@ -963,7 +965,7 @@ const Home = memo(() => {
           </div>
           
           {popularWinesLoading ? (
-            <div className="flex gap-3 sm:gap-4 md:gap-6">
+            <div className="flex gap-3 sm:gap-4 md:gap-6 overflow-hidden">
               {Array.from({ length: 12 }).map((_, index) => (
                 <div key={index} className="w-64 sm:w-72 md:w-80 flex-shrink-0">
                   <Card className="overflow-hidden">
@@ -1176,7 +1178,7 @@ const Home = memo(() => {
       </section>
 
       {/* Shop by Category Section */}
-      <section className="py-6 sm:py-8 md:py-12 bg-gray-950" aria-label="Shop by Category">
+      <section className="py-6 sm:py-8 md:py-12 bg-gray-950" aria-label="Shop by Category" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 800px' }}>
         <div className="container mx-auto px-3 sm:px-4">
           <div className="text-center mb-6 sm:mb-8">
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-gold bg-gold/10 border border-gold/20 px-3 py-1 rounded-full mb-3">
@@ -1237,7 +1239,7 @@ const Home = memo(() => {
       </section>
 
       {/* Best Selling Beers Section */}
-      <section className="py-6 sm:py-8 md:py-10 bg-gradient-to-b from-background via-amber-50/30 to-background" aria-label="Best Selling Beers">
+      <section className="py-6 sm:py-8 md:py-10 bg-gradient-to-b from-background via-amber-50/30 to-background" aria-label="Best Selling Beers" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 900px' }}>
         <div className="container mx-auto px-3 sm:px-4">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5 sm:mb-6 md:mb-8">
             <div>
@@ -1261,14 +1263,14 @@ const Home = memo(() => {
 
           <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-6">
             {[
-              { name: "Craft Beer", image: "/cat/beer.png", link: "/category/beer" },
-              { name: "Lager", image: "/cat/beer.png", link: "/category/beer" },
-              { name: "Whisky", image: "/cat/whiskey.png", link: "/category/whisky" },
-              { name: "Gin", image: "/cat/gin.png", link: "/category/gin" }
+              { name: "Craft Beer", image: "/cat/beer.webp", link: "/category/beer" },
+              { name: "Lager", image: "/cat/beer.webp", link: "/category/beer" },
+              { name: "Whisky", image: "/cat/whiskey.webp", link: "/category/whisky" },
+              { name: "Gin", image: "/cat/gin.webp", link: "/category/gin" }
             ].map((cat) => (
               <Link key={cat.name} to={cat.link} className="group">
                 <div className="flex flex-col items-center gap-2 p-3 rounded-xl border border-border/50 hover:border-amber-300 hover:bg-amber-50/50 transition-all duration-200 bg-card">
-                  <img src={cat.image} alt={cat.name} className="w-10 h-10 object-contain" loading="lazy" />
+                  <img src={cat.image} alt={cat.name} className="w-10 h-10 object-contain" loading="lazy" decoding="async" width="40" height="40" />
                   <span className="text-xs font-semibold text-foreground text-center leading-tight">{cat.name}</span>
                 </div>
               </Link>
@@ -1288,6 +1290,152 @@ const Home = memo(() => {
         </div>
       </section>
 
+
+      {/* Shop by Brand Section - grouped by category */}
+      {brandsByCategory.length > 0 && (
+        <section className="py-6 sm:py-8 md:py-10 bg-gray-50/80" aria-label="Shop by Brand" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 900px' }}>
+          <div className="container mx-auto px-3 sm:px-4">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground tracking-tight text-center mb-5 sm:mb-6 md:mb-8">
+              Shop by Brand
+            </h2>
+
+            <div className="space-y-3 sm:space-y-4">
+              {brandsByCategory.map((group) => {
+                const expanded = !!expandedBrandCats[group.category];
+                const visibleBrands = expanded ? group.brands : group.brands.slice(0, 13);
+                return (
+                  <div key={group.category} className="bg-card rounded-xl border border-border/40 shadow-sm p-4 sm:p-5">
+                    <h3 className="text-base sm:text-lg font-bold text-wine mb-2.5 sm:mb-3">
+                      {group.category}
+                    </h3>
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                      {visibleBrands.map((brand) => (
+                        <Link
+                          key={brand}
+                          to={`/brands/${encodeURIComponent(brand)}`}
+                          title={`${brand} price in Kenya — order online`}
+                          className="inline-flex items-center whitespace-nowrap px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg border border-border/50 bg-background shadow-sm text-xs sm:text-sm font-semibold text-foreground hover:text-wine hover:border-wine/50 transition-colors touch-manipulation"
+                        >
+                          {brand}
+                        </Link>
+                      ))}
+                    </div>
+                    {group.brands.length > 13 && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setExpandedBrandCats((prev) => ({ ...prev, [group.category]: !prev[group.category] }))
+                        }
+                        className="mt-3 inline-flex items-center px-4 py-1.5 rounded-full border border-border text-xs sm:text-sm font-medium text-foreground hover:border-wine hover:text-wine transition-colors touch-manipulation"
+                      >
+                        {expanded ? 'Show Less' : 'Show More'}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Why Drinks Avenue - crawlable SEO content */}
+      <section className="py-6 sm:py-10 md:py-14 bg-background" aria-label="Why Drinks Avenue" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 800px' }}>
+        <div className="container mx-auto px-3 sm:px-4 max-w-5xl">
+          <div className="text-center mb-4 sm:mb-8">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-wine bg-wine/10 border border-wine/20 px-3 py-1 rounded-full mb-2 sm:mb-3">
+              ⭐ WHY CHOOSE US
+            </span>
+            <h2 className="text-lg sm:text-2xl md:text-3xl font-bold text-foreground tracking-tight px-2">
+              The 24 Hour Liquor Store Near You in Nairobi
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-5 mb-5 sm:mb-8">
+            <Card className="border border-border/60">
+              <CardContent className="p-3.5 sm:p-5">
+                <div className="flex items-center gap-2 mb-1 sm:mb-1.5">
+                  <span className="text-lg sm:text-2xl" aria-hidden="true">🕐</span>
+                  <h3 className="font-bold text-sm sm:text-base">True 24 Hour Delivery</h3>
+                </div>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  Whether it's midnight or midday, place your order and we deliver. Our 24 hour alcohol
+                  delivery covers Nairobi in around 30 minutes — including late night delivery when
+                  every other liquor store near you has closed.
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="border border-border/60">
+              <CardContent className="p-3.5 sm:p-5">
+                <div className="flex items-center gap-2 mb-1 sm:mb-1.5">
+                  <span className="text-lg sm:text-2xl" aria-hidden="true">🥃</span>
+                  <h3 className="font-bold text-sm sm:text-base">Your Whisky Hub &amp; Wine Cellar</h3>
+                </div>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  From single malt Scotch and bourbon in our{" "}
+                  <Link to="/category/whisky" className="text-wine hover:underline">whisky collection</Link>{" "}
+                  to fine <Link to="/category/wine" className="text-wine hover:underline">wines</Link>,{" "}
+                  <Link to="/category/gin" className="text-wine hover:underline">gins</Link>, and ice-cold{" "}
+                  <Link to="/category/beer" className="text-wine hover:underline">beers</Link> — plus
+                  liqueurs and mixers to complete the party.
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="border border-border/60">
+              <CardContent className="p-3.5 sm:p-5">
+                <div className="flex items-center gap-2 mb-1 sm:mb-1.5">
+                  <span className="text-lg sm:text-2xl" aria-hidden="true">🛵</span>
+                  <h3 className="font-bold text-sm sm:text-base">Fast, Legal &amp; Reliable</h3>
+                </div>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  Pay with M-Pesa, card or cash on delivery. Every order is age-verified (18+) and
+                  handled by our own riders, so your alcohol delivery arrives quickly and safely
+                  anywhere in Nairobi and across Kenya.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed text-center max-w-3xl mx-auto">
+            Searching for <strong>24 hour alcohol delivery</strong> or simply a{" "}
+            <strong>liquor store near me</strong> that's open right now?
+            Drinks Avenue is Nairobi's trusted online alcohol delivery service — browse{" "}
+            <Link to="/offers" className="text-wine hover:underline">this week's offers</Link>, explore{" "}
+            <Link to="/brands" className="text-wine hover:underline">top brands</Link>, or call{" "}
+            <a href="tel:+254790831798" className="text-wine hover:underline">0790 831798</a> and
+            we'll have your drinks at your door in about 30 minutes, 24 hours a day.
+          </p>
+        </div>
+      </section>
+
+      {/* FAQ Section - visible content matching FAQPage JSON-LD */}
+      <section className="py-8 sm:py-10 md:py-14 bg-gradient-to-b from-wine/5 via-background to-background" aria-label="Frequently Asked Questions" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 700px' }}>
+        <div className="container mx-auto px-3 sm:px-4 max-w-3xl">
+          <div className="text-center mb-6 sm:mb-8">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-wine bg-wine/10 border border-wine/20 px-3 py-1 rounded-full mb-3">
+              💬 FAQ
+            </span>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+              Alcohol Delivery Questions, Answered
+            </h2>
+            <p className="text-sm text-muted-foreground mt-2">
+              Everything you need to know about our 24 hour drinks delivery in Nairobi and Kenya
+            </p>
+          </div>
+          <Accordion type="single" collapsible className="w-full">
+            {homeFaqs.map((faq, index) => (
+              <AccordionItem key={index} value={`faq-${index}`}>
+                <AccordionTrigger className="text-left text-sm sm:text-base font-semibold">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
 
       {/* Footer CTA */}
       <section className="relative overflow-hidden py-10 sm:py-14 md:py-20 bg-gray-950" aria-label="Call to Action">
