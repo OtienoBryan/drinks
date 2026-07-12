@@ -78,6 +78,25 @@ export interface BlogPost {
   updatedAt: string;
 }
 
+export interface ProductReview {
+  id: number;
+  productId: number;
+  customerName: string;
+  rating: number;
+  title?: string;
+  comment: string;
+  createdAt: string;
+}
+
+export interface CreateReviewRequest {
+  customerName: string;
+  customerEmail?: string;
+  rating: number;
+  title?: string;
+  comment: string;
+  website?: string; // honeypot field, must stay empty
+}
+
 export interface ApiResponse<T> {
   data: T;
   success: boolean;
@@ -237,6 +256,18 @@ class ApiService {
 
   async getPopularWines(): Promise<Product[]> {
     return this.request<Product[]>('/products/popular-wines');
+  }
+
+  // Product reviews
+  async getProductReviews(productId: number): Promise<ProductReview[]> {
+    return this.request<ProductReview[]>(`/products/${productId}/reviews`);
+  }
+
+  async createProductReview(productId: number, data: CreateReviewRequest): Promise<ProductReview> {
+    return this.request<ProductReview>(`/products/${productId}/reviews`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   }
 
   // Blogs

@@ -293,7 +293,7 @@ const Category = () => {
         productSchema.aggregateRating = {
           "@type": "AggregateRating",
           "ratingValue": product.rating,
-          "reviewCount": product.reviews?.length || 1,
+          "reviewCount": product.reviewCount || 1,
           "bestRating": "5",
           "worstRating": "1"
         };
@@ -756,15 +756,12 @@ const Category = () => {
                       </div>
                     </div>
                     
-                    {/* Products Grid - Improved spacing with SEO attributes */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4" itemScope itemType="https://schema.org/ItemList">
+                    {/* Products Grid - structured data is emitted via JSON-LD above; no inline microdata here to avoid incomplete Product/ItemList items */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
                       {paginatedProducts.map((product, index) => (
-                        <article 
-                          key={product.id} 
+                        <article
+                          key={product.id}
                           className="relative group"
-                          itemScope 
-                          itemType="https://schema.org/Product"
-                          itemProp="itemListElement"
                         >
                           <ProductCard
                             product={product}

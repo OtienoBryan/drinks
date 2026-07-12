@@ -23,6 +23,24 @@ const wineImage = "/wine-bottle.jpg";
 const beerImage = "/beer-bottles.jpg";
 const whiskeyImage = "/whiskey-bottle.jpg";
 
+// Maps a category name to a curated shelf icon; falls back to the category's own image if unmatched
+const CATEGORY_ICON_MAP: Record<string, string> = {
+  beer: "/cat/beer.webp",
+  wine: "/cat/wine.webp",
+  whiskey: "/cat/whiskey.webp",
+  whisky: "/cat/whiskey.webp",
+  vodka: "/cat/vodka.webp",
+  rum: "/cat/rum.webp",
+  gin: "/cat/gin.webp",
+  tequila: "/cat/tequila.webp",
+  liqueur: "/cat/liq.webp",
+  liqueurs: "/cat/liq.webp",
+};
+
+const getCategoryIcon = (category: { name: string; image?: string }) => {
+  return CATEGORY_ICON_MAP[category.name.toLowerCase()] || category.image || "/placeholder-product.jpg";
+};
+
 const Home = memo(() => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -42,7 +60,7 @@ const Home = memo(() => {
   const [searchQuery, setSearchQuery] = useState(urlSearchQuery);
   const { addToCart } = useCart();
   const { isOnline } = useNetworkStatus();
-  
+
   // Update search query when URL changes
   useEffect(() => {
     setSearchQuery(urlSearchQuery);
@@ -97,13 +115,15 @@ const Home = memo(() => {
     return maxDiscount;
   }, []);
 
-  const offersOfTheWeek = useMemo(() => 
-    (allProducts as any[])?.filter(product => 
+  const offersOfTheWeek = useMemo(() =>
+    (allProducts as any[])?.filter(product =>
       product && isProductOnOffer(product)
     ).slice(0, 12) || [],
     [allProducts, isProductOnOffer]
   );
-  
+
+  const heroCategories = useMemo(() => (categories as any[])?.slice(0, 6) || [], [categories]);
+
   // Get all unique brands from products
   const allBrands = useMemo(() => {
     if (!allProducts || !Array.isArray(allProducts)) return [];
@@ -584,58 +604,56 @@ const Home = memo(() => {
       {/* Navigation */}
       <Navigation />
 
-      {/* Hero Section - Optimized for LCP and Mobile with SEO */}
-      <section className="relative w-full bg-gray-100 hero-section" aria-label="Hero Banner" itemScope itemType="https://schema.org/WebPageElement">
-        <div className="w-full max-w-full">
-          <div className="relative aspect-[3/2] h-auto max-h-[55vh] sm:aspect-auto sm:h-[52vh] md:h-[62vh] lg:h-[50vh] w-full max-w-full overflow-hidden shadow-2xl hero-image-container">
-            <picture>
-              {/* Mobile: small WebP (~100 KB vs 2.9 MB PNG) for fast LCP */}
-              <source
-                media="(max-width: 640px)"
-                srcSet="/slider/5-mobile.webp"
-                type="image/webp"
-                sizes="100vw"
-              />
-              {/* Tablet & Desktop: full-size WebP */}
-              <source
-                media="(min-width: 641px)"
-                srcSet="/slider/5-desktop.webp"
-                type="image/webp"
-                sizes="100vw"
-              />
-              {/* Fallback img element with optimized attributes and SEO */}
-              <img
-                src="/slider/5.png"
-                alt="Premium Drinks Delivery Kenya - Fast 30-minute alcohol delivery service in Nairobi and across Kenya. Order wine, beer, whiskey, gin, rum, and spirits online."
-                className="hero-image"
-                loading="eager"
-                decoding="async"
-                fetchpriority="high"
-                width="1536"
-                height="1024"
-                sizes="100vw"
-                itemProp="image"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  willChange: 'auto'
-                }}
-                onLoad={(e) => {
-                  // Ensure image is properly loaded and displayed
-                  const img = e.currentTarget;
-                  img.style.opacity = '1';
-                }}
-              />
-            </picture>
-            {/* Gradient overlay - optimized for mobile visibility */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-black/5 sm:from-black/40 sm:via-transparent sm:to-black/10 pointer-events-none" />
-            {/* Hero Content for SEO */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="text-center px-4">
-                <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-4 drop-shadow-lg" itemProp="headline">
+      {/* Hero Section - hero image + category picker */}
+      <section className="relative w-full bg-background" aria-label="Hero Banner" itemScope itemType="https://schema.org/WebPageElement">
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
+          {/* Two-column hero */}
+          <div className="flex flex-col lg:flex-row gap-4 sm:gap-5">
+            {/* Left: fixed hero image */}
+            <div className="lg:w-3/5 relative rounded-2xl overflow-hidden shadow-lg bg-gray-100 aspect-[4/3] sm:aspect-[16/9] lg:aspect-auto lg:h-[420px]">
+              <picture>
+                <source media="(max-width: 640px)" srcSet="/slider/5-mobile.webp" type="image/webp" />
+                <source media="(min-width: 641px)" srcSet="/slider/5-desktop.webp" type="image/webp" />
+                <img
+                  src="/slider/5.png"
+                  alt="Premium Drinks Delivery Kenya - Fast 30-minute alcohol delivery service in Nairobi and across Kenya."
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                  decoding="async"
+                  fetchpriority="high"
+                  itemProp="image"
+                />
+              </picture>
+            </div>
+
+            {/* Right: category shelf picker */}
+            <div className="lg:w-2/5 bg-white rounded-2xl shadow-lg border border-border/50 p-4 sm:p-5 flex flex-col">
+              {heroCategories.length > 0 && (
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                  {heroCategories.map((category: any) => (
+                    <Link key={category.id} to={`/category/${category.name.toLowerCase()}`} className="group">
+                      <div className="flex flex-col items-center gap-1.5 p-2.5 sm:p-3 rounded-xl border border-border/50 hover:border-wine/40 hover:bg-wine/5 transition-all duration-200 bg-card">
+                        <img
+                          src={getCategoryIcon(category)}
+                          alt={category.name}
+                          className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <span className="text-[10px] sm:text-xs font-semibold text-foreground text-center leading-tight">
+                          {category.name}
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-4 sm:mt-5">
+                <h1 className="text-foreground text-base sm:text-lg font-bold" itemProp="headline">
                   24 Hour Alcohol Delivery in Nairobi
                 </h1>
-                <p className="text-white text-sm sm:text-base md:text-lg lg:text-xl drop-shadow-md max-w-2xl mx-auto" itemProp="description">
+                <p className="text-muted-foreground text-xs sm:text-sm mt-1" itemProp="description">
                   Whisky, wine, beer, gin &amp; spirits delivered in 30 minutes from the liquor store near you, 24/7 across Kenya
                 </p>
               </div>
@@ -651,8 +669,6 @@ const Home = memo(() => {
         data-section="offers-week"
         className="py-6 sm:py-8 md:py-10 bg-background"
         aria-label="Special Offers"
-        itemScope
-        itemType="https://schema.org/ItemList"
       >
         <div className="container mx-auto px-3 sm:px-4">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5 sm:mb-6 md:mb-8">
@@ -773,8 +789,6 @@ const Home = memo(() => {
         data-section="featured-products"
         className="py-6 sm:py-8 md:py-10 bg-gradient-to-b from-wine/5 via-background to-background"
         aria-label="Featured Products"
-        itemScope
-        itemType="https://schema.org/ItemList"
       >
         <div className="container mx-auto px-3 sm:px-4">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5 sm:mb-6 md:mb-8">
@@ -826,9 +840,9 @@ const Home = memo(() => {
               </Button>
             </div>
           ) : displayProducts.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
               {displayProducts.map((product, index) => (
-                <div key={product.id} className="relative group" itemProp="item" itemScope itemType="https://schema.org/Product">
+                <div key={product.id} className="relative group">
                   <Card className="overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-active:scale-95 border border-border/60 hover:border-wine/40 flex flex-col h-full rounded-xl bg-card">
                     <Link to={`/product/${productSlug(product)}`} className="block flex-1 min-w-0 touch-manipulation cursor-pointer">
                       <div className="relative overflow-hidden rounded-t-xl bg-gray-50">
@@ -1295,40 +1309,48 @@ const Home = memo(() => {
       {brandsByCategory.length > 0 && (
         <section className="py-6 sm:py-8 md:py-10 bg-gray-50/80" aria-label="Shop by Brand" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 900px' }}>
           <div className="container mx-auto px-3 sm:px-4">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground tracking-tight text-center mb-5 sm:mb-6 md:mb-8">
-              Shop by Brand
-            </h2>
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5 sm:mb-6 md:mb-8">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+                Shop by Brand
+              </h2>
+              <Link to="/brands" className="shrink-0">
+                <Button size="sm" variant="outline" className="border-wine text-wine hover:bg-wine hover:text-white transition-colors text-xs sm:text-sm touch-manipulation">
+                  View All Brands
+                  <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            </div>
 
-            <div className="space-y-3 sm:space-y-4">
+            <div className="columns-1 lg:columns-2 gap-3 sm:gap-4">
               {brandsByCategory.map((group) => {
                 const expanded = !!expandedBrandCats[group.category];
-                const visibleBrands = expanded ? group.brands : group.brands.slice(0, 13);
+                const visibleBrands = expanded ? group.brands : group.brands.slice(0, 8);
                 return (
-                  <div key={group.category} className="bg-card rounded-xl border border-border/40 shadow-sm p-4 sm:p-5">
-                    <h3 className="text-base sm:text-lg font-bold text-wine mb-2.5 sm:mb-3">
+                  <div key={group.category} className="break-inside-avoid mb-3 sm:mb-4 bg-card rounded-xl border border-border/40 shadow-sm p-4 lg:p-3.5">
+                    <h3 className="text-base lg:text-sm font-bold text-wine mb-2.5 lg:mb-2">
                       {group.category}
                     </h3>
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    <div className="flex flex-wrap gap-1.5">
                       {visibleBrands.map((brand) => (
                         <Link
                           key={brand}
                           to={`/brands/${encodeURIComponent(brand)}`}
                           title={`${brand} price in Kenya — order online`}
-                          className="inline-flex items-center whitespace-nowrap px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg border border-border/50 bg-background shadow-sm text-xs sm:text-sm font-semibold text-foreground hover:text-wine hover:border-wine/50 transition-colors touch-manipulation"
+                          className="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-lg border border-border/50 bg-background shadow-sm text-xs font-semibold text-foreground hover:text-wine hover:border-wine/50 transition-colors touch-manipulation"
                         >
                           {brand}
                         </Link>
                       ))}
                     </div>
-                    {group.brands.length > 13 && (
+                    {group.brands.length > 8 && (
                       <button
                         type="button"
                         onClick={() =>
                           setExpandedBrandCats((prev) => ({ ...prev, [group.category]: !prev[group.category] }))
                         }
-                        className="mt-3 inline-flex items-center px-4 py-1.5 rounded-full border border-border text-xs sm:text-sm font-medium text-foreground hover:border-wine hover:text-wine transition-colors touch-manipulation"
+                        className="mt-2.5 inline-flex items-center px-3 py-1 rounded-full border border-border text-xs font-medium text-foreground hover:border-wine hover:text-wine transition-colors touch-manipulation"
                       >
-                        {expanded ? 'Show Less' : 'Show More'}
+                        {expanded ? 'Show Less' : `Show All ${group.brands.length}`}
                       </button>
                     )}
                   </div>

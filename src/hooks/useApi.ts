@@ -191,6 +191,26 @@ export function useProductsByCategoryName(categoryName: string, enabled: boolean
   };
 }
 
+export function useProductReviews(productId: number, enabled: boolean = true) {
+  const queryKey = ['product-reviews', productId];
+
+  const { data, isLoading: loading, error } = useQuery({
+    queryKey,
+    queryFn: () => apiService.getProductReviews(productId),
+    enabled: enabled && productId > 0,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 15 * 60 * 1000, // 15 minutes
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data || null,
+    loading,
+    error: error?.message || null
+  };
+}
+
 export function useSearchProducts(query: string) {
   return useApi<Product[]>(
     () => query ? apiService.searchProducts(query) : Promise.resolve([] as Product[]),

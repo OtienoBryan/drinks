@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -28,11 +30,34 @@ import {
   Copy
 } from "lucide-react";
 import type { Product } from "@/services/api";
-import { useProduct, useProductsByCategory } from "@/hooks/useApi";
+import { apiService } from "@/services/api";
+import { useProduct, useProductsByCategory, useProductReviews } from "@/hooks/useApi";
 import { LoadingWine, LoadingWave } from "@/components/ui/lottie-loader";
 import { ProductPageSkeleton } from "@/components/ui/loading-skeleton";
 import { formatPrice } from "@/data/products";
 import { slugToProductId, productSlug } from "@/lib/utils";
+
+const StarRatingInput = ({ value, onChange }: { value: number; onChange: (rating: number) => void }) => {
+  return (
+    <div className="flex items-center gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          onClick={() => onChange(star)}
+          aria-label={`Rate ${star} out of 5`}
+          className="p-0.5"
+        >
+          <Star
+            className={`h-6 w-6 transition-colors ${
+              star <= value ? "text-gold fill-gold" : "text-muted-foreground"
+            }`}
+          />
+        </button>
+      ))}
+    </div>
+  );
+};
 
 const Product = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -52,6 +77,60 @@ const Product = () => {
   // Only fetch related products after main product loads and has categoryId
   const shouldFetchRelated = !productLoading && product?.categoryId && product.categoryId > 0;
   const { data: relatedProducts = [] } = useProductsByCategory(product?.categoryId || 0, shouldFetchRelated);
+
+  const { data: reviewsData } = useProductReviews(product?.id || 0, !!product);
+  const reviews = reviewsData || [];
+
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [reviewForm, setReviewForm] = useState({
+    customerName: "",
+    customerEmail: "",
+    rating: 0,
+    title: "",
+    comment: "",
+    website: "", // honeypot - must stay empty
+  });
+
+  const handleReviewInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setReviewForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!product) return;
+
+    if (!reviewForm.customerName.trim() || !reviewForm.comment.trim() || reviewForm.rating < 1) {
+      toast({
+        title: "Please complete the form",
+        description: "A name, star rating, and review comment are required.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    try {
+      await apiService.createProductReview(product.id, reviewForm);
+      toast({
+        title: "Thanks for your review!",
+        description: "It's been submitted and is pending approval.",
+      });
+      setReviewForm({ customerName: "", customerEmail: "", rating: 0, title: "", comment: "", website: "" });
+      setShowReviewForm(false);
+      setReviewSubmitted(true);
+    } catch (error) {
+      toast({
+        title: "Couldn't submit review",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
 
   // Memoize filtered related products to avoid recalculation
   const filteredRelatedProducts = useMemo(() => {
@@ -266,6 +345,23 @@ const Product = () => {
       };
     }
 
+    // Add individual reviews if any approved reviews exist
+    if (reviews && reviews.length > 0) {
+      productSchema.review = reviews.slice(0, 20).map((review) => ({
+        "@type": "Review",
+        "author": { "@type": "Person", "name": review.customerName },
+        "datePublished": review.createdAt,
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": review.rating,
+          "bestRating": "5",
+          "worstRating": "1"
+        },
+        ...(review.title && { "name": review.title }),
+        "reviewBody": review.comment
+      }));
+    }
+
     // Add additional properties
     const additionalProperties = [];
     if (product.alcoholContent) {
@@ -323,7 +419,7 @@ const Product = () => {
     }
 
     return productSchema;
-  }, [product]);
+  }, [product, reviews]);
 
   // Breadcrumb structured data
   const breadcrumbStructuredData = useMemo(() => {
@@ -923,8 +1019,110 @@ const Product = () => {
                     </div>
                   </div>
 
-                  <div className="mt-4 rounded-lg bg-muted/30 p-3 sm:p-4 text-sm text-muted-foreground">
-                    Reviews are not available in the current API implementation.
+                  <div className="mt-4 space-y-4">
+                    {reviews.length === 0 ? (
+                      <div className="rounded-lg bg-muted/30 p-3 sm:p-4 text-sm text-muted-foreground">
+                        No reviews yet — be the first to review this product.
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {reviews.map((review) => (
+                          <div key={review.id} className="border-b border-muted pb-4 last:border-b-0 last:pb-0">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-sm font-semibold text-gray-900">{review.customerName}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(review.createdAt).toLocaleDateString()}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1 mt-1">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`h-3.5 w-3.5 ${
+                                    i < review.rating ? "text-gold fill-gold" : "text-muted-foreground"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                            {review.title && (
+                              <div className="text-sm font-medium text-gray-900 mt-1">{review.title}</div>
+                            )}
+                            <p className="text-sm text-muted-foreground mt-1">{review.comment}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {reviewSubmitted && !showReviewForm && (
+                      <div className="rounded-lg bg-green-50 border border-green-200 p-3 text-sm text-green-800">
+                        Thanks! Your review has been submitted and is pending approval.
+                      </div>
+                    )}
+
+                    {!showReviewForm ? (
+                      <Button variant="outline" size="sm" onClick={() => setShowReviewForm(true)}>
+                        Write a Review
+                      </Button>
+                    ) : (
+                      <form onSubmit={handleReviewSubmit} className="space-y-3 rounded-lg border p-3 sm:p-4">
+                        <div>
+                          <label className="text-xs font-medium text-gray-700 mb-1 block">Your rating</label>
+                          <StarRatingInput
+                            value={reviewForm.rating}
+                            onChange={(rating) => setReviewForm(prev => ({ ...prev, rating }))}
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <Input
+                            name="customerName"
+                            placeholder="Your name"
+                            value={reviewForm.customerName}
+                            onChange={handleReviewInputChange}
+                            required
+                          />
+                          <Input
+                            name="customerEmail"
+                            type="email"
+                            placeholder="Email (optional)"
+                            value={reviewForm.customerEmail}
+                            onChange={handleReviewInputChange}
+                          />
+                        </div>
+                        <Input
+                          name="title"
+                          placeholder="Review title (optional)"
+                          value={reviewForm.title}
+                          onChange={handleReviewInputChange}
+                        />
+                        <Textarea
+                          name="comment"
+                          placeholder="Share your experience with this product..."
+                          value={reviewForm.comment}
+                          onChange={handleReviewInputChange}
+                          rows={3}
+                          required
+                        />
+                        {/* Honeypot field - hidden from real users, catches basic bots */}
+                        <input
+                          type="text"
+                          name="website"
+                          value={reviewForm.website}
+                          onChange={handleReviewInputChange}
+                          tabIndex={-1}
+                          autoComplete="off"
+                          className="hidden"
+                          aria-hidden="true"
+                        />
+                        <div className="flex gap-2">
+                          <Button type="submit" size="sm" disabled={isSubmittingReview}>
+                            {isSubmittingReview ? "Submitting..." : "Submit Review"}
+                          </Button>
+                          <Button type="button" variant="ghost" size="sm" onClick={() => setShowReviewForm(false)}>
+                            Cancel
+                          </Button>
+                        </div>
+                      </form>
+                    )}
                   </div>
                 </CardContent>
               </Card>
