@@ -109,7 +109,11 @@ const Navigation = () => {
         };
       }) || [];
 
-    return [...baseCategories, ...apiCategoriesList];
+    return [
+      ...baseCategories,
+      ...apiCategoriesList,
+      { name: "Blog", path: "/blog", icon: "📝", id: undefined },
+    ];
   }, [apiCategories, allSubcategories]);
 
   // Helper function to get appropriate icon for category

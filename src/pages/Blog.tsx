@@ -1,15 +1,18 @@
 import { useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Clock } from "lucide-react";
 import { useBlogs } from "@/hooks/useApi";
 import { BlogPost } from "@/services/api";
+import { stripHtml } from "@/lib/blogContent";
+
+const SITE_URL = "https://www.drinksavenue.co.ke";
+
+const formatCardDate = (date: string) =>
+  new Date(date)
+    .toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+    .toUpperCase();
 
 const Blog = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,104 +32,150 @@ const Blog = () => {
     );
   }, [searchQuery, blogPosts]);
 
+  const blogSchema = useMemo(() => ({
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "@id": `${SITE_URL}/blog#blog`,
+    "name": "Drinks Avenue Blog",
+    "description": "Drinks guides, cocktail ideas, and bottle notes from Drinks Avenue Kenya.",
+    "url": `${SITE_URL}/blog`,
+    "publisher": { "@id": `${SITE_URL}/#organization` },
+    "blogPost": (blogPosts || []).slice(0, 20).map((post: BlogPost) => ({
+      "@type": "BlogPosting",
+      "headline": post.title,
+      "url": `${SITE_URL}/blog/${post.slug || post.id}`,
+      "datePublished": post.createdAt,
+      "dateModified": post.updatedAt,
+      ...(post.excerpt ? { "description": stripHtml(post.excerpt).slice(0, 160) } : {}),
+      ...(post.featuredImage ? { "image": post.featuredImage } : {}),
+      "author": {
+        "@type": post.author ? "Person" : "Organization",
+        "name": post.author || "Drinks Avenue",
+      },
+    })),
+  }), [blogPosts]);
+
+  const breadcrumbSchema = useMemo(() => ({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": `${SITE_URL}/` },
+      { "@type": "ListItem", "position": 2, "name": "Blog", "item": `${SITE_URL}/blog` },
+    ],
+  }), []);
+
   return (
     <div className="min-h-screen bg-background text-slate-900">
       <Helmet>
-        <title>Blog | Drinks Avenue</title>
+        <title>Blog - Drinks Guides, Cocktail Ideas &amp; Bottle Notes | Drinks Avenue</title>
         <meta
           name="description"
-          content="Read the latest blog stories, delivery tips, and beverage guides from Drinks Avenue."
+          content="Drinks guides, cocktail ideas, and bottle notes from Drinks Avenue — wine, whisky, beer, and spirits tips with fast delivery across Kenya."
         />
-        <link rel="canonical" href="https://www.drinksavenue.co.ke/blog" />
+        <link rel="canonical" href={`${SITE_URL}/blog`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Drinks Avenue" />
+        <meta property="og:title" content="Drinks Avenue Blog - Drinks Guides, Cocktail Ideas & Bottle Notes" />
+        <meta
+          property="og:description"
+          content="Drinks guides, cocktail ideas, and bottle notes for wine, beer, whisky, and spirits lovers in Kenya."
+        />
+        <meta property="og:url" content={`${SITE_URL}/blog`} />
+        <meta property="og:image" content={`${SITE_URL}/logo.png`} />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Drinks Avenue Blog - Drinks Guides, Cocktail Ideas & Bottle Notes" />
+        <meta
+          name="twitter:description"
+          content="Drinks guides, cocktail ideas, and bottle notes for wine, beer, whisky, and spirits lovers in Kenya."
+        />
+        <script type="application/ld+json">{JSON.stringify(blogSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
       </Helmet>
 
       <Navigation />
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-wine/10 via-transparent to-gold/10 py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl">
-            <p className="mb-4 inline-flex rounded-full border border-wine/20 bg-wine/5 px-4 py-1 text-sm font-semibold uppercase tracking-[0.3em] text-wine">
-              Drinks Avenue Blog
-            </p>
-            <h1 className="text-4xl font-bold sm:text-5xl">Stories, guides, and delivery tips for every drink lover.</h1>
-            <p className="mt-6 max-w-2xl text-lg text-slate-600">
-              Discover news from the store, flavour guides, and helpful articles for ordering wine, beer, spirits, and more in Kenya.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <main className="container mx-auto px-4 py-10">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <main className="container mx-auto px-4 py-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-2xl font-semibold">Latest posts</h2>
-            <p className="mt-2 text-sm text-slate-500">
-              Browse our curated selection of blog articles for drinks delivery, product tips, and lifestyle ideas.
-            </p>
+            <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-900">
+              <span className="inline-block h-6 w-1.5 rounded-sm bg-wine" aria-hidden="true" />
+              Blog
+            </h1>
+            <p className="mt-0.5 text-xs text-slate-600">Drinks guides, cocktail ideas, and bottle notes.</p>
           </div>
 
-          <div className="w-full max-w-sm">
+          <div className="w-full max-w-xs">
             <label htmlFor="blog-search" className="sr-only">
               Search posts
             </label>
-            <div className="relative">
-              <input
-                id="blog-search"
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search blog posts..."
-                className="w-full rounded-full border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:border-wine focus:ring-2 focus:ring-wine/20"
-              />
-            </div>
+            <input
+              id="blog-search"
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search blog posts..."
+              className="w-full rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm outline-none focus:border-wine focus:ring-2 focus:ring-wine/20"
+            />
           </div>
         </div>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+        <div className="mt-4">
           {loading ? (
-            <div className="col-span-full rounded-3xl border border-slate-200 bg-slate-50 p-8 text-center text-slate-600">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-8 text-center text-slate-600">
               Loading blog posts...
             </div>
           ) : error ? (
-            <div className="col-span-full rounded-3xl border border-rose-200 bg-rose-50 p-8 text-center text-rose-700">
+            <div className="rounded-xl border border-rose-200 bg-rose-50 p-8 text-center text-rose-700">
               Failed to load blog posts: {error}
             </div>
           ) : filteredPosts.length > 0 ? (
-            filteredPosts.map((post: BlogPost) => (
-              <Card key={post.id} className="group overflow-hidden border border-slate-200 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                <CardHeader className="space-y-3 p-6">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="secondary">{post.tags?.[0] ?? 'Blog'}</Badge>
-                    <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-                      <Clock className="h-3.5 w-3.5" />
-                      {new Date(post.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </span>
-                  </div>
-                  <div className="space-y-2">
-                    <CardTitle className="text-xl font-semibold text-slate-900">{post.title}</CardTitle>
-                    <p className="text-sm text-slate-600">{post.excerpt || post.content?.slice(0, 140) + '...'}</p>
-                  </div>
-                </CardHeader>
-                <CardContent className="flex items-center justify-between gap-4 border-t border-slate-200 px-6 py-4">
-                  <div className="text-sm text-slate-500">
-                    <p>{post.author || 'Drinks Avenue'}</p>
-                    <p>{new Date(post.createdAt).toLocaleDateString()}</p>
-                  </div>
-                  <Button asChild variant="ghost" size="sm" className="text-wine hover:text-wine/80">
-                    <Link to={`/blog/${post.slug || post.id}`}>Read more</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+              {filteredPosts.map((post: BlogPost) => (
+                <article
+                  key={post.id}
+                  className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+                >
+                  <Link to={`/blog/${post.slug || post.id}`} className="flex h-full flex-col">
+                    <div className="h-32 w-full overflow-hidden border-b border-slate-100 bg-white">
+                      {post.featuredImage ? (
+                        <img
+                          src={post.featuredImage}
+                          alt={post.title}
+                          loading="lazy"
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-slate-50 text-3xl" aria-hidden="true">
+                          🍷
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-1 flex-col gap-1 p-3">
+                      <time
+                        dateTime={post.createdAt}
+                        className="text-[11px] font-bold uppercase tracking-wide text-wine"
+                      >
+                        {formatCardDate(post.createdAt)}
+                      </time>
+                      <h2 className="text-sm font-bold leading-snug text-slate-900 transition-colors group-hover:text-wine line-clamp-2">
+                        {post.title}
+                      </h2>
+                      <p className="text-xs leading-relaxed text-slate-600 line-clamp-3">
+                        {stripHtml(post.excerpt || post.content || '').slice(0, 160)}
+                      </p>
+                    </div>
+                  </Link>
+                </article>
+              ))}
+            </div>
           ) : (
-            <div className="col-span-full rounded-3xl border border-slate-200 bg-slate-50 p-8 text-center text-slate-600">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-8 text-center text-slate-600">
               No blog posts matched your search.
             </div>
           )}
         </div>
       </main>
 
-      <Separator />
       <Footer />
     </div>
   );

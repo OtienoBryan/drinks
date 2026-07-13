@@ -78,6 +78,14 @@ export interface BlogPost {
   updatedAt: string;
 }
 
+export interface DeliveryLocation {
+  id: number;
+  name: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ProductReview {
   id: number;
   productId: number;
@@ -270,17 +278,26 @@ class ApiService {
     });
   }
 
-  // Blogs
+  // Blogs (public, published posts only)
   async getBlogs(): Promise<BlogPost[]> {
-    return this.request<BlogPost[]>('/admin/blogs');
+    return this.request<BlogPost[]>('/blogs');
   }
 
   async getBlogById(id: number): Promise<BlogPost> {
-    return this.request<BlogPost>(`/admin/blogs/${id}`);
+    return this.request<BlogPost>(`/blogs/${id}`);
   }
 
   async getBlogBySlug(slug: string): Promise<BlogPost> {
-    return this.request<BlogPost>(`/admin/blogs/slug/${encodeURIComponent(slug)}`);
+    return this.request<BlogPost>(`/blogs/slug/${encodeURIComponent(slug)}`);
+  }
+
+  // Delivery locations (public)
+  async getDeliveryLocations(): Promise<DeliveryLocation[]> {
+    return this.request<DeliveryLocation[]>('/delivery-locations');
+  }
+
+  async getDeliveryLocationBySlug(slug: string): Promise<DeliveryLocation> {
+    return this.request<DeliveryLocation>(`/delivery-locations/${encodeURIComponent(slug)}`);
   }
 
   // Helper method to get products by category name (for backward compatibility)

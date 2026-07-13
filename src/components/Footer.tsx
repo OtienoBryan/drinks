@@ -94,6 +94,8 @@ const Footer = () => {
               <li><Link to="/orders" className="text-gray-300 hover:text-white transition-colors">My Orders</Link></li>
               <li><Link to="/account" className="text-gray-300 hover:text-white transition-colors">My Account</Link></li>
               <li><Link to="/brands" className="text-gray-300 hover:text-white transition-colors">Brands</Link></li>
+              <li><Link to="/blog" className="text-gray-300 hover:text-white transition-colors">Blog</Link></li>
+              <li><Link to="/delivery-locations" className="text-gray-300 hover:text-white transition-colors">Delivery Areas</Link></li>
               <li><Link to="/contact" className="text-gray-300 hover:text-white transition-colors">FAQ &amp; Help</Link></li>
               <li className="sm:col-span-2"><a href="/sitemap.xml" className="text-gray-300 hover:text-white transition-colors">Sitemap</a></li>
             </ul>

@@ -11,13 +11,17 @@ export default async function handler(
     const currentDate = new Date().toISOString().split('T')[0];
     
     // Fetch all data
-    const [productsResponse, categoriesResponse] = await Promise.all([
+    const [productsResponse, categoriesResponse, blogsResponse, locationsResponse] = await Promise.all([
       fetch(`${API_BASE_URL}/api/products`).catch(() => null),
-      fetch(`${API_BASE_URL}/api/categories`).catch(() => null)
+      fetch(`${API_BASE_URL}/api/categories`).catch(() => null),
+      fetch(`${API_BASE_URL}/api/blogs`).catch(() => null),
+      fetch(`${API_BASE_URL}/api/delivery-locations`).catch(() => null)
     ]);
 
     const products = productsResponse?.ok ? await productsResponse.json().catch(() => []) : [];
     const categories = categoriesResponse?.ok ? await categoriesResponse.json().catch(() => []) : [];
+    const blogs = blogsResponse?.ok ? await blogsResponse.json().catch(() => []) : [];
+    const deliveryLocations = locationsResponse?.ok ? await locationsResponse.json().catch(() => []) : [];
 
     // Extract unique brands and origins from products
     const brands = new Set<string>();
@@ -77,6 +81,48 @@ export default async function handler(
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>`);
+
+    urls.push(`  <url>
+    <loc>${baseUrl}/blog</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`);
+
+    urls.push(`  <url>
+    <loc>${baseUrl}/delivery-locations</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>`);
+
+    // Delivery location pages - local SEO landing pages
+    (deliveryLocations || []).forEach((location: any) => {
+      if (location.name) {
+        const locationSlug = location.name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)/g, '');
+        urls.push(`  <url>
+    <loc>${baseUrl}/delivery-locations/${locationSlug}</loc>
+    <lastmod>${location.updatedAt ? new Date(location.updatedAt).toISOString().split('T')[0] : currentDate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>`);
+      }
+    });
+
+    // Blog posts - fresh content boosts crawl frequency and domain authority
+    (blogs || []).forEach((blog: any) => {
+      if (blog.slug || blog.id) {
+        urls.push(`  <url>
+    <loc>${baseUrl}/blog/${encodeURIComponent(blog.slug || blog.id)}</loc>
+    <lastmod>${blog.updatedAt ? new Date(blog.updatedAt).toISOString().split('T')[0] : currentDate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>`);
+      }
+    });
 
     // Category pages - high priority
     (categories || []).forEach((category: any) => {

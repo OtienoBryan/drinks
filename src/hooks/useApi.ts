@@ -13,7 +13,7 @@ export function useApi<T>(
     queryKey,
     queryFn: apiCall,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
     retry: 1,
     refetchOnWindowFocus: false,
   });
@@ -31,7 +31,7 @@ export function useCategories() {
     queryKey: ['categories'],
     queryFn: () => apiService.getCategories(),
     staleTime: 10 * 60 * 1000, // 10 minutes - categories don't change often
-    cacheTime: 30 * 60 * 1000, // 30 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes
     retry: 1,
     refetchOnWindowFocus: false,
   });
@@ -44,7 +44,7 @@ export function useProducts() {
     queryKey: ['products'],
     queryFn: () => apiService.getProducts(),
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 15 * 60 * 1000, // 15 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
     retry: 1,
     refetchOnWindowFocus: false,
   });
@@ -57,7 +57,7 @@ export function useFeaturedProducts() {
     queryKey: ['featured-products'],
     queryFn: () => apiService.getFeaturedProducts(),
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 15 * 60 * 1000, // 15 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
     retry: 1,
     refetchOnWindowFocus: false,
   });
@@ -71,7 +71,7 @@ export function useBlogs(enabled: boolean = true) {
     queryFn: () => apiService.getBlogs(),
     enabled,
     staleTime: 5 * 60 * 1000,
-    cacheTime: 15 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
     retry: 1,
     refetchOnWindowFocus: false,
   });
@@ -95,7 +95,34 @@ export function useBlog(identifier: string | number, enabled: boolean = true) {
     queryFn,
     enabled: enabled && !!identifier,
     staleTime: 5 * 60 * 1000,
-    cacheTime: 15 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
+
+  return { data: data || null, loading, error: error?.message || null };
+}
+
+export function useDeliveryLocations() {
+  const { data, isLoading: loading, error } = useQuery({
+    queryKey: ['delivery-locations'],
+    queryFn: () => apiService.getDeliveryLocations(),
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
+
+  return { data: data || [], loading, error: error?.message || null };
+}
+
+export function useDeliveryLocation(slug: string, enabled: boolean = true) {
+  const { data, isLoading: loading, error } = useQuery({
+    queryKey: ['delivery-location', slug],
+    queryFn: () => apiService.getDeliveryLocationBySlug(slug),
+    enabled: enabled && !!slug,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
     retry: 1,
     refetchOnWindowFocus: false,
   });
@@ -108,7 +135,7 @@ export function useNewArrivals() {
     queryKey: ['new-arrivals'],
     queryFn: () => apiService.getNewArrivals(),
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 15 * 60 * 1000, // 15 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
     retry: 1,
     refetchOnWindowFocus: false,
   });
@@ -121,7 +148,7 @@ export function usePopularWines() {
     queryKey: ['popular-wines'],
     queryFn: () => apiService.getPopularWines(),
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 15 * 60 * 1000, // 15 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
     retry: 1,
     refetchOnWindowFocus: false,
   });
@@ -135,7 +162,7 @@ export function useProduct(id: number) {
     queryFn: () => apiService.getProductById(id),
     enabled: id > 0, // Only fetch if valid ID
     staleTime: 10 * 60 * 1000, // 10 minutes - products don't change often
-    cacheTime: 30 * 60 * 1000, // 30 minutes - keep in cache longer
+    gcTime: 30 * 60 * 1000, // 30 minutes - keep in cache longer
     retry: 1, // Reduce retries for faster failure
     retryDelay: 500, // Faster retry
     refetchOnWindowFocus: false,
@@ -159,7 +186,7 @@ export function useProductsByCategory(categoryId: number, enabled: boolean = tru
     queryFn: () => apiService.getProductsByCategory(categoryId),
     enabled: enabled && categoryId > 0, // Only fetch if enabled and valid ID
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 15 * 60 * 1000, // 15 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
     retry: 1,
     refetchOnWindowFocus: false,
   });
@@ -179,7 +206,7 @@ export function useProductsByCategoryName(categoryName: string, enabled: boolean
     queryFn: () => apiService.getProductsByCategoryName(categoryName),
     enabled: enabled && !!categoryName, // Only fetch if enabled and category name exists
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 15 * 60 * 1000, // 15 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
     retry: 1,
     refetchOnWindowFocus: false,
   });
@@ -199,7 +226,7 @@ export function useProductReviews(productId: number, enabled: boolean = true) {
     queryFn: () => apiService.getProductReviews(productId),
     enabled: enabled && productId > 0,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 15 * 60 * 1000, // 15 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
     retry: 1,
     refetchOnWindowFocus: false,
   });

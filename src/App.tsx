@@ -32,6 +32,8 @@ const Offers = createLazyComponent(() => import("./pages/Offers"), "Loading offe
 const Featured = createLazyComponent(() => import("./pages/Featured"), "Loading featured products...");
 const Blog = createLazyComponent(() => import("./pages/Blog"), "Loading blog posts...");
 const BlogDetail = createLazyComponent(() => import("./pages/BlogDetail"), "Loading blog post...");
+const DeliveryLocations = createLazyComponent(() => import("./pages/DeliveryLocations"), "Loading delivery locations...");
+const DeliveryLocationDetail = createLazyComponent(() => import("./pages/DeliveryLocationDetail"), "Loading delivery location...");
 const Brands = createLazyComponent(() => import("./pages/Brands"), "Loading brands...");
 const Origin = createLazyComponent(() => import("./pages/Origin"), "Loading origins...");
 const Sitemap = createLazyComponent(() => import("./pages/Sitemap"), "Loading...");
@@ -41,7 +43,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
-      cacheTime: 10 * 60 * 1000, // 10 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
       retry: 1,
       refetchOnWindowFocus: false,
     },
@@ -102,6 +104,8 @@ const App = () => {
                 <Route path="/offers" element={<Offers />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<BlogDetail />} />
+                <Route path="/delivery-locations" element={<DeliveryLocations />} />
+                <Route path="/delivery-locations/:slug" element={<DeliveryLocationDetail />} />
                 <Route path="/featured" element={<Featured />} />
                 <Route path="/brands/:brandName" element={<Brands />} />
                 <Route path="/brands" element={<Brands />} />
