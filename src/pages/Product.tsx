@@ -633,7 +633,7 @@ const Product = () => {
           </ol>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[460px_1fr] gap-5 sm:gap-6 lg:gap-10" itemScope itemType="https://schema.org/Product">
+        <div className="grid grid-cols-1 lg:grid-cols-[460px_1fr] gap-5 sm:gap-6 lg:gap-10">
           {/* Product Image */}
           <div>
             <div className="bg-white border rounded-xl p-4 sm:p-6 lg:p-8 flex items-center justify-center">
@@ -646,7 +646,6 @@ const Product = () => {
                 width="520"
                 height="520"
                 fetchpriority="high"
-                itemProp="image"
               />
             </div>
             <p className="mt-2 text-[11px] text-muted-foreground text-center">
@@ -697,7 +696,7 @@ const Product = () => {
                   )}
                 </div>
 
-                <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-gray-900" itemProp="name">
+                <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-gray-900">
                   {product.name}
                 </h1>
 
@@ -967,7 +966,7 @@ const Product = () => {
               <Card className="border bg-white">
                 <CardContent className="p-4 sm:p-6">
                   <h2 className="text-sm font-bold text-gray-900 mb-2">Product Description</h2>
-                  <div className="space-y-3 text-sm text-muted-foreground leading-relaxed" itemProp="description">
+                  <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
                     <div className="sm:hidden">
                       {(product.description ? product.description.split(/\n\s*\n/g) : [
                         `Discover ${product.name}${product.brand ? ` by ${product.brand}` : ""}${product.origin ? `, produced in ${product.origin}` : ""}.`,
